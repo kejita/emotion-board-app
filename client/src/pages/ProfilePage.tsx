@@ -53,6 +53,13 @@ export default function ProfilePage() {
 
           <div className="space-y-4">
             <div>
+              <p className="font-body-sm text-muted-foreground mb-1">ユーザー名</p>
+              <p className="font-body text-foreground font-semibold">
+                {user.name}
+              </p>
+            </div>
+
+            <div>
               <p className="font-body-sm text-muted-foreground mb-1">年齢</p>
               <p className="font-body text-foreground">
                 {AGE_GROUP_LABELS[user.age]}
@@ -85,7 +92,7 @@ export default function ProfilePage() {
 
           <div className="mt-6 pt-6 border-t border-border">
             <p className="font-body-sm text-muted-foreground mb-3">
-              ※ ユーザーは匿名です。年齢と性別のみ記録されています。
+              ※ ユーザー名はニックネーム（匿名）です。年齢と性別のみ記録されています。
             </p>
             <Button
               onClick={handleLogout}

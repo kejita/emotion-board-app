@@ -10,6 +10,7 @@ export type Gender = 'male' | 'female' | 'other';
 
 export interface User {
   id: string;
+  name: string;
   age: AgeGroup;
   gender: Gender;
   createdAt: Date;
