@@ -1,16 +1,41 @@
+/**
+ * App.tsx
+ * ルーティングとグローバルレイアウト
+ * 
+ * Design Philosophy: Emotion Palette - Warm Minimalism
+ * - 感情を色彩で表現（ゴールド、スレートブルー、コーラルピンク、ディープオレンジ）
+ * - 温かみのあるクリーム色背景
+ * - ミニマルなデザインで投稿内容に焦点
+ * - スムーズなアニメーション
+ */
+
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import Home from "./pages/Home";
-
+import { AppProvider, useApp } from "./contexts/AppContext";
+import OnboardingPage from "./pages/OnboardingPage";
+import HomePage from "./pages/HomePage";
+import PostPage from "./pages/PostPage";
+import SearchPage from "./pages/SearchPage";
+import ProfilePage from "./pages/ProfilePage";
+import NotFound from "./pages/NotFound";
 
 function Router() {
+  const { user } = useApp();
+
+  // Show onboarding if no user
+  if (!user) {
+    return <OnboardingPage />;
+  }
+
   return (
     <Switch>
-      <Route path={"/"} component={Home} />
+      <Route path={"/"} component={HomePage} />
+      <Route path={"/post"} component={PostPage} />
+      <Route path={"/search"} component={SearchPage} />
+      <Route path={"/profile"} component={ProfilePage} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
@@ -18,22 +43,16 @@ function Router() {
   );
 }
 
-// NOTE: About Theme
-// - First choose a default theme according to your design style (dark or light bg), than change color palette in index.css
-//   to keep consistent foreground/background color across components
-// - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
-
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="light"
-        // switchable
-      >
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
+      <ThemeProvider defaultTheme="light">
+        <AppProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Router />
+          </TooltipProvider>
+        </AppProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );

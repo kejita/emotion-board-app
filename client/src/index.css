@@ -43,39 +43,45 @@
 }
 
 :root {
-  --primary: var(--color-blue-700);
-  --primary-foreground: var(--color-blue-50);
-  --sidebar-primary: var(--color-blue-600);
-  --sidebar-primary-foreground: var(--color-blue-50);
-  --chart-1: var(--color-blue-300);
-  --chart-2: var(--color-blue-500);
-  --chart-3: var(--color-blue-600);
-  --chart-4: var(--color-blue-700);
-  --chart-5: var(--color-blue-800);
-  --radius: 0.65rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.235 0.015 65);
+  /* Emotion Colors */
+  --emotion-happy: #D4AF37;     /* うれしい - ゴールド */
+  --emotion-sad: #4A6FA5;       /* 悲しい - スレートブルー */
+  --emotion-tired: #E07856;     /* つらい - コーラルピンク */
+  --emotion-angry: #D97706;     /* 怒り - ディープオレンジ */
+  
+  --primary: #D4AF37;
+  --primary-foreground: #FBF8F3;
+  --sidebar-primary: #D4AF37;
+  --sidebar-primary-foreground: #FBF8F3;
+  --chart-1: #D4AF37;
+  --chart-2: #4A6FA5;
+  --chart-3: #E07856;
+  --chart-4: #D97706;
+  --chart-5: #8B5A2B;
+  --radius: 1rem;
+  --background: oklch(0.98 0.002 70);
+  --foreground: oklch(0.2 0.01 65);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.235 0.015 65);
+  --card-foreground: oklch(0.2 0.01 65);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.235 0.015 65);
-  --secondary: oklch(0.98 0.001 286.375);
-  --secondary-foreground: oklch(0.4 0.015 65);
-  --muted: oklch(0.967 0.001 286.375);
-  --muted-foreground: oklch(0.552 0.016 285.938);
-  --accent: oklch(0.967 0.001 286.375);
-  --accent-foreground: oklch(0.141 0.005 285.823);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
-  --ring: oklch(0.623 0.214 259.815);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.235 0.015 65);
-  --sidebar-accent: oklch(0.967 0.001 286.375);
-  --sidebar-accent-foreground: oklch(0.141 0.005 285.823);
-  --sidebar-border: oklch(0.92 0.004 286.32);
-  --sidebar-ring: oklch(0.623 0.214 259.815);
+  --popover-foreground: oklch(0.2 0.01 65);
+  --secondary: oklch(0.95 0.002 70);
+  --secondary-foreground: oklch(0.3 0.01 65);
+  --muted: oklch(0.92 0.002 70);
+  --muted-foreground: oklch(0.5 0.01 65);
+  --accent: #D4AF37;
+  --accent-foreground: oklch(0.2 0.01 65);
+  --destructive: #E07856;
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.9 0.002 70);
+  --input: oklch(0.95 0.002 70);
+  --ring: #D4AF37;
+  --sidebar: oklch(0.98 0.002 70);
+  --sidebar-foreground: oklch(0.2 0.01 65);
+  --sidebar-accent: #D4AF37;
+  --sidebar-accent-foreground: oklch(0.2 0.01 65);
+  --sidebar-border: oklch(0.9 0.002 70);
+  --sidebar-ring: #D4AF37;
 }
 
 .dark {
@@ -118,7 +124,8 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+    font-family: 'Source Sans Pro', sans-serif;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
@@ -134,19 +141,66 @@
 }
 
 @layer components {
-  /**
-   * Custom container utility that centers content and adds responsive padding.
-   *
-   * This overrides Tailwind's default container behavior to:
-   * - Auto-center content (mx-auto)
-   * - Add responsive horizontal padding
-   * - Set max-width for large screens
-   *
-   * Usage: <div className="container">...</div>
-   *
-   * For custom widths, use max-w-* utilities directly:
-   * <div className="max-w-6xl mx-auto px-4">...</div>
-   */
+  /* Typography System - Emotion Board Design */
+  .font-display {
+    font-family: 'Georgia', serif;
+    @apply text-3xl font-bold tracking-tight;
+  }
+
+  .font-heading {
+    font-family: 'Georgia', serif;
+    @apply text-2xl font-bold;
+  }
+
+  .font-subheading {
+    font-family: 'Source Sans Pro', sans-serif;
+    @apply text-lg font-semibold;
+  }
+
+  .font-body {
+    font-family: 'Source Sans Pro', sans-serif;
+    @apply text-base font-normal;
+  }
+
+  .font-body-sm {
+    font-family: 'Source Sans Pro', sans-serif;
+    @apply text-sm font-normal;
+  }
+
+  /* Emotion Color Utilities */
+  .emotion-happy {
+    @apply bg-[#D4AF37] text-[#2B2B2B];
+  }
+
+  .emotion-sad {
+    @apply bg-[#4A6FA5] text-white;
+  }
+
+  .emotion-tired {
+    @apply bg-[#E07856] text-white;
+  }
+
+  .emotion-angry {
+    @apply bg-[#D97706] text-white;
+  }
+
+  .emotion-happy-border {
+    @apply border-l-4 border-[#D4AF37];
+  }
+
+  .emotion-sad-border {
+    @apply border-l-4 border-[#4A6FA5];
+  }
+
+  .emotion-tired-border {
+    @apply border-l-4 border-[#E07856];
+  }
+
+  .emotion-angry-border {
+    @apply border-l-4 border-[#D97706];
+  }
+
+  /* Custom container utility */
   .container {
     width: 100%;
     margin-left: auto;
