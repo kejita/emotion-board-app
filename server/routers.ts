@@ -33,6 +33,7 @@ export const appRouter = router({
         name: z.string().min(1).max(255),
         age: z.enum(["10s", "20s", "30s", "40s", "50s+"]),
         gender: z.enum(["male", "female", "other"]),
+        country: z.string().max(64).optional().default(''),
       }))
       .mutation(async ({ input }) => {
         const userId = nanoid();
@@ -41,6 +42,7 @@ export const appRouter = router({
           name: input.name,
           age: input.age,
           gender: input.gender,
+          country: input.country,
         });
         return { id: userId };
       }),
@@ -59,6 +61,7 @@ export const appRouter = router({
         userId: z.string(),
         boardCategory: z.enum(["work", "family", "school", "other"]),
         emotionCategory: z.enum(["happy", "sad", "tired", "angry"]),
+        country: z.string().max(64).optional().default(''),
         when: z.date(),
         where: z.string().max(255).optional().default(''),
         who: z.string().max(255).optional().default(''),
@@ -72,6 +75,7 @@ export const appRouter = router({
           userId: input.userId,
           boardCategory: input.boardCategory,
           emotionCategory: input.emotionCategory,
+          country: input.country,
           when: input.when,
           where: input.where,
           who: input.who,

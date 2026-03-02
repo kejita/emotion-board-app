@@ -41,6 +41,7 @@ export default function PostPage() {
       await addPost({
         boardCategory: selectedBoard,
         emotionCategory: selectedEmotion,
+        country: '', // auto-filled from user profile in AppContext
         when: new Date(when),
         where,
         who,

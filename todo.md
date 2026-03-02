@@ -40,3 +40,6 @@
 - [x] ホーム画面にもサブタイトルを追加
 - [x] サムネイル画像をCDNにアップロードしてOGP画像として設定
 - [x] SEO対策（日本語・英語）: title, description, keywords, OGP, Twitter Card, hreflang, canonical, structured data
+- [x] ユーザー登録に国選択フィールドを追加（DBスキーマ・API・UI）
+- [x] 投稿カード右上のバッジを掲示板カテゴリーから国表示に変更
+- [x] 投稿作成時に国情報を自動付与（ユーザー情報から取得）

@@ -1,0 +1,9 @@
+{
+  "query": "ALTER TABLE emotion_board_users ADD COLUMN country varchar(64) NOT NULL DEFAULT '';\nALTER TABLE emotion_board_posts ADD COLUMN country varchar(64) NOT NULL DEFAULT '';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 23uHapfiyb36WAz.root --database cvxJnDu67qo88yDFvdSTsi --execute ALTER TABLE emotion_board_users ADD COLUMN country varchar(64) NOT NULL DEFAULT '';\nALTER TABLE emotion_board_posts ADD COLUMN country varchar(64) NOT NULL DEFAULT '';",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 2499
+}

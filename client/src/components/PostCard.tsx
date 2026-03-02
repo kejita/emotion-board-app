@@ -5,7 +5,7 @@
  */
 
 import React, { useState } from 'react';
-import { Post, EMOTION_ICONS, EMOTION_COLORS, EMOTION_LABELS, BOARD_LABELS } from '@/types/models';
+import { Post, EMOTION_ICONS, EMOTION_COLORS, EMOTION_LABELS, getCountryDisplay } from '@/types/models';
 import { Trash2, Heart } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { toast } from 'sonner';
@@ -75,7 +75,7 @@ export default function PostCard({ post }: PostCardProps) {
         </div>
         <div className="flex items-center gap-2">
           <span className="text-xs px-2 py-1 rounded-full bg-secondary text-muted-foreground font-body-sm">
-            {BOARD_LABELS[post.boardCategory]}
+            {post.country ? getCountryDisplay(post.country) : '🌍'}
           </span>
           {isOwner && (
             <button

@@ -1,0 +1,9 @@
+{
+  "query": "DELETE FROM emotion_board_likes;\nDELETE FROM emotion_board_posts;\nDELETE FROM emotion_board_users;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 23uHapfiyb36WAz.root --database cvxJnDu67qo88yDFvdSTsi --execute DELETE FROM emotion_board_likes;\nDELETE FROM emotion_board_posts;\nDELETE FROM emotion_board_users;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 2143
+}

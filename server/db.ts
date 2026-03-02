@@ -132,6 +132,7 @@ export async function getEmotionBoardPosts(currentUserId?: string, filterUserId?
       userId: emotionBoardPosts.userId,
       boardCategory: emotionBoardPosts.boardCategory,
       emotionCategory: emotionBoardPosts.emotionCategory,
+      country: emotionBoardPosts.country,
       when: emotionBoardPosts.when,
       where: emotionBoardPosts.where,
       who: emotionBoardPosts.who,

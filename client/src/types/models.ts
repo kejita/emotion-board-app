@@ -13,6 +13,7 @@ export interface User {
   name: string;
   age: AgeGroup;
   gender: Gender;
+  country: string; // ISO 3166-1 alpha-2 country code or empty string
   createdAt: Date;
 }
 
@@ -22,6 +23,7 @@ export interface Post {
   userName?: string | null; // 投稿者のニックネーム
   boardCategory: BoardCategory;
   emotionCategory: EmotionCategory;
+  country: string; // Country code from user profile
   when: Date;
   where: string;
   who: string;
@@ -91,3 +93,43 @@ export const GENDER_LABELS: Record<Gender, string> = {
   female: '女性',
   other: 'その他',
 };
+
+// Country list with flag emoji + name
+export const COUNTRIES: { code: string; flag: string; name: string; nameEn: string }[] = [
+  { code: 'JP', flag: '🇯🇵', name: '日本', nameEn: 'Japan' },
+  { code: 'US', flag: '🇺🇸', name: 'アメリカ', nameEn: 'United States' },
+  { code: 'CN', flag: '🇨🇳', name: '中国', nameEn: 'China' },
+  { code: 'KR', flag: '🇰🇷', name: '韓国', nameEn: 'South Korea' },
+  { code: 'TW', flag: '🇹🇼', name: '台湾', nameEn: 'Taiwan' },
+  { code: 'HK', flag: '🇭🇰', name: '香港', nameEn: 'Hong Kong' },
+  { code: 'PH', flag: '🇵🇭', name: 'フィリピン', nameEn: 'Philippines' },
+  { code: 'TH', flag: '🇹🇭', name: 'タイ', nameEn: 'Thailand' },
+  { code: 'VN', flag: '🇻🇳', name: 'ベトナム', nameEn: 'Vietnam' },
+  { code: 'ID', flag: '🇮🇩', name: 'インドネシア', nameEn: 'Indonesia' },
+  { code: 'MY', flag: '🇲🇾', name: 'マレーシア', nameEn: 'Malaysia' },
+  { code: 'SG', flag: '🇸🇬', name: 'シンガポール', nameEn: 'Singapore' },
+  { code: 'IN', flag: '🇮🇳', name: 'インド', nameEn: 'India' },
+  { code: 'AU', flag: '🇦🇺', name: 'オーストラリア', nameEn: 'Australia' },
+  { code: 'NZ', flag: '🇳🇿', name: 'ニュージーランド', nameEn: 'New Zealand' },
+  { code: 'GB', flag: '🇬🇧', name: 'イギリス', nameEn: 'United Kingdom' },
+  { code: 'FR', flag: '🇫🇷', name: 'フランス', nameEn: 'France' },
+  { code: 'DE', flag: '🇩🇪', name: 'ドイツ', nameEn: 'Germany' },
+  { code: 'IT', flag: '🇮🇹', name: 'イタリア', nameEn: 'Italy' },
+  { code: 'ES', flag: '🇪🇸', name: 'スペイン', nameEn: 'Spain' },
+  { code: 'PT', flag: '🇵🇹', name: 'ポルトガル', nameEn: 'Portugal' },
+  { code: 'BR', flag: '🇧🇷', name: 'ブラジル', nameEn: 'Brazil' },
+  { code: 'MX', flag: '🇲🇽', name: 'メキシコ', nameEn: 'Mexico' },
+  { code: 'CA', flag: '🇨🇦', name: 'カナダ', nameEn: 'Canada' },
+  { code: 'RU', flag: '🇷🇺', name: 'ロシア', nameEn: 'Russia' },
+  { code: 'TR', flag: '🇹🇷', name: 'トルコ', nameEn: 'Turkey' },
+  { code: 'SA', flag: '🇸🇦', name: 'サウジアラビア', nameEn: 'Saudi Arabia' },
+  { code: 'ZA', flag: '🇿🇦', name: '南アフリカ', nameEn: 'South Africa' },
+  { code: 'NG', flag: '🇳🇬', name: 'ナイジェリア', nameEn: 'Nigeria' },
+  { code: 'OTHER', flag: '🌍', name: 'その他', nameEn: 'Other' },
+];
+
+export function getCountryDisplay(code: string): string {
+  const c = COUNTRIES.find((c) => c.code === code);
+  if (!c) return code || '🌍';
+  return `${c.flag} ${c.nameEn}`;
+}

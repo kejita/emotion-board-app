@@ -35,6 +35,7 @@ export const emotionBoardUsers = mysqlTable("emotion_board_users", {
   name: varchar("name", { length: 255 }).notNull(), // Nickname
   age: varchar("age", { length: 32 }).notNull(), // e.g., "10s", "20s", "30s", "40s", "50s+"
   gender: mysqlEnum("gender", ["male", "female", "other"]).notNull(),
+  country: varchar("country", { length: 64 }).notNull().default(''), // ISO 3166-1 alpha-2 country code
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -50,6 +51,7 @@ export const emotionBoardPosts = mysqlTable("emotion_board_posts", {
   userId: varchar("userId", { length: 64 }).notNull(),
   boardCategory: mysqlEnum("boardCategory", ["work", "family", "school", "other"]).notNull(),
   emotionCategory: mysqlEnum("emotionCategory", ["happy", "sad", "tired", "angry"]).notNull(),
+  country: varchar("country", { length: 64 }).notNull().default(''), // Country code from user profile
   // 5W1H fields
   when: timestamp("when").notNull(), // When did it happen
   where: varchar("where", { length: 255 }).notNull(), // Where did it happen

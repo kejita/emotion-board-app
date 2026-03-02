@@ -1,13 +1,13 @@
 /**
  * Onboarding Page
- * ユーザー登録画面 - 初回アクセス時にユーザー名・年齢・性別を登録
+ * ユーザー登録画面 - 初回アクセス時にユーザー名・年齢・性別・国を登録
  * DBにユーザーを作成し、IDをローカルストレージに保存
  */
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useApp } from '@/contexts/AppContext';
-import { User, AgeGroup, Gender, AGE_GROUP_LABELS, GENDER_LABELS } from '@/types/models';
+import { User, AgeGroup, Gender, AGE_GROUP_LABELS, GENDER_LABELS, COUNTRIES } from '@/types/models';
 import { trpc } from '@/lib/trpc';
 
 // DBのage enumに合わせたマッピング
@@ -24,6 +24,7 @@ export default function OnboardingPage() {
   const [userName, setUserName] = useState('');
   const [selectedAge, setSelectedAge] = useState<AgeGroup | null>(null);
   const [selectedGender, setSelectedGender] = useState<Gender | null>(null);
+  const [selectedCountry, setSelectedCountry] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const createUserMutation = trpc.emotionBoard.createUser.useMutation();
@@ -45,6 +46,7 @@ export default function OnboardingPage() {
         name: userName.trim(),
         age: AGE_TO_DB[selectedAge],
         gender: selectedGender,
+        country: selectedCountry,
       });
 
       // フロントエンドのUserオブジェクトを作成
@@ -53,6 +55,7 @@ export default function OnboardingPage() {
         name: userName.trim(),
         age: selectedAge,
         gender: selectedGender,
+        country: selectedCountry,
         createdAt: new Date(),
       };
 
@@ -141,6 +144,31 @@ export default function OnboardingPage() {
             </div>
           </div>
 
+          {/* Country Selection */}
+          <div className="mb-8">
+            <label className="font-body font-semibold text-foreground block mb-3">
+              国を選択してください
+              <span className="ml-2 text-xs text-muted-foreground font-normal">任意</span>
+            </label>
+            <div className="relative">
+              <select
+                value={selectedCountry}
+                onChange={(e) => setSelectedCountry(e.target.value)}
+                className="w-full px-4 py-3 border border-border rounded-lg font-body text-foreground bg-card focus:outline-none focus:ring-2 focus:ring-primary appearance-none cursor-pointer"
+              >
+                <option value="">選択してください / Select your country</option>
+                {COUNTRIES.map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {c.flag} {c.nameEn} / {c.name}
+                  </option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-muted-foreground">
+                ▾
+              </div>
+            </div>
+          </div>
+
           {/* Submit Button */}
           <Button
             onClick={handleSubmit}
@@ -152,7 +180,7 @@ export default function OnboardingPage() {
 
           {/* Info Text */}
           <p className="font-body-sm text-muted-foreground text-center mt-4">
-            ※ ユーザー名はニックネーム（匿名）です。年齢と性別のみ記録されます。
+            ※ ユーザー名はニックネーム（匿名）です。年齢・性別・国のみ記録されます。
           </p>
         </div>
       </div>

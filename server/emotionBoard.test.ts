@@ -31,6 +31,21 @@ describe("emotionBoard router", () => {
       expect(result.id).toMatch(/^[a-z0-9_-]+$/i);
     });
 
+    it("creates a user with country field", async () => {
+      const ctx = createPublicContext();
+      const caller = appRouter.createCaller(ctx);
+
+      const result = await caller.emotionBoard.createUser({
+        name: "国テストユーザー",
+        age: "30s",
+        gender: "male",
+        country: "JP",
+      });
+
+      expect(result).toHaveProperty("id");
+      expect(result.id).toMatch(/^[a-z0-9_-]+$/i);
+    });
+
     it("validates required fields - empty name should fail", async () => {
       const ctx = createPublicContext();
       const caller = appRouter.createCaller(ctx);
