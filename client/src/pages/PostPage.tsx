@@ -75,6 +75,11 @@ export default function PostPage() {
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="container py-6 max-w-2xl">
+        {/* Required notice */}
+        <p className="font-body-sm text-muted-foreground mb-6">
+          <span className="text-destructive font-semibold">*</span> は必須項目です。それ以外は任意入力です。
+        </p>
+
         {/* Board Category Selection */}
         <div className="mb-8">
           <label className="font-subheading text-foreground block mb-3">
@@ -125,7 +130,7 @@ export default function PostPage() {
         {/* When */}
         <div className="mb-6">
           <label className="font-body font-semibold text-foreground block mb-2">
-            いつ（日時）
+            いつ（日時）<span className="ml-2 text-xs text-muted-foreground font-normal">任意</span>
           </label>
           <input
             type="date"
@@ -138,7 +143,7 @@ export default function PostPage() {
         {/* Where */}
         <div className="mb-6">
           <label className="font-body font-semibold text-foreground block mb-2">
-            どこで（場所）
+            どこで（場所）<span className="ml-2 text-xs text-muted-foreground font-normal">任意</span>
           </label>
           <input
             type="text"
@@ -152,7 +157,7 @@ export default function PostPage() {
         {/* Who */}
         <div className="mb-6">
           <label className="font-body font-semibold text-foreground block mb-2">
-            誰から（人物）
+            誰から（人物）<span className="ml-2 text-xs text-muted-foreground font-normal">任意</span>
           </label>
           <input
             type="text"
@@ -183,7 +188,7 @@ export default function PostPage() {
         {/* How */}
         <div className="mb-8">
           <label className="font-body font-semibold text-foreground block mb-2">
-            どんなふうに（感情・反応）
+            どんなふうに（感情・反応）<span className="ml-2 text-xs text-muted-foreground font-normal">任意</span>
           </label>
           <textarea
             placeholder="その時の気持ちや反応を書いてください"
