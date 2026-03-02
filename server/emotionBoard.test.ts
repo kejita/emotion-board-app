@@ -1,8 +1,6 @@
-import { describe, expect, it, vi, beforeEach } from "vitest";
+import { describe, expect, it } from "vitest";
 import { appRouter } from "./routers";
 import type { TrpcContext } from "./_core/context";
-
-type AuthenticatedUser = NonNullable<TrpcContext["user"]>;
 
 function createPublicContext(): TrpcContext {
   return {
@@ -33,7 +31,7 @@ describe("emotionBoard router", () => {
       expect(result.id).toMatch(/^[a-z0-9_-]+$/i);
     });
 
-    it("validates required fields", async () => {
+    it("validates required fields - empty name should fail", async () => {
       const ctx = createPublicContext();
       const caller = appRouter.createCaller(ctx);
 
@@ -51,7 +49,7 @@ describe("emotionBoard router", () => {
   });
 
   describe("createPost", () => {
-    it("creates a new emotion board post", async () => {
+    it("creates a new emotion board post with all fields", async () => {
       const ctx = createPublicContext();
       const caller = appRouter.createCaller(ctx);
 
@@ -62,7 +60,7 @@ describe("emotionBoard router", () => {
         gender: "female",
       });
 
-      // Then create a post
+      // Then create a post with all fields
       const postResult = await caller.emotionBoard.createPost({
         userId: userResult.id,
         boardCategory: "work",
@@ -78,7 +76,30 @@ describe("emotionBoard router", () => {
       expect(postResult.id).toMatch(/^[a-z0-9_-]+$/i);
     });
 
-    it("validates post fields", async () => {
+    it("creates a post with only required field (what)", async () => {
+      const ctx = createPublicContext();
+      const caller = appRouter.createCaller(ctx);
+
+      // First create a user
+      const userResult = await caller.emotionBoard.createUser({
+        name: "テストユーザー最小",
+        age: "30s",
+        gender: "male",
+      });
+
+      // Create a post with only required field
+      const postResult = await caller.emotionBoard.createPost({
+        userId: userResult.id,
+        boardCategory: "other",
+        emotionCategory: "sad",
+        when: new Date(),
+        what: "最小限の投稿",
+      });
+
+      expect(postResult).toHaveProperty("id");
+    });
+
+    it("validates post fields - empty what should fail", async () => {
       const ctx = createPublicContext();
       const caller = appRouter.createCaller(ctx);
 
@@ -88,10 +109,7 @@ describe("emotionBoard router", () => {
           boardCategory: "work",
           emotionCategory: "happy",
           when: new Date(),
-          where: "",
-          who: "上司",
-          what: "プレゼンが成功した",
-          how: "とても嬉しかった",
+          what: "",
         });
         expect.fail("Should have thrown validation error");
       } catch (error) {
@@ -110,7 +128,7 @@ describe("emotionBoard router", () => {
       expect(Array.isArray(result)).toBe(true);
     });
 
-    it("retrieves posts for a specific user", async () => {
+    it("retrieves posts for a specific user via filterUserId", async () => {
       const ctx = createPublicContext();
       const caller = appRouter.createCaller(ctx);
 
@@ -124,7 +142,7 @@ describe("emotionBoard router", () => {
       // Create a post
       await caller.emotionBoard.createPost({
         userId: userResult.id,
-        boardCategory: "home",
+        boardCategory: "family",
         emotionCategory: "sad",
         when: new Date(),
         where: "家",
@@ -133,9 +151,9 @@ describe("emotionBoard router", () => {
         how: "落ち込んでいる",
       });
 
-      // Get posts for this user
+      // Get posts for this user using filterUserId
       const posts = await caller.emotionBoard.getPosts({
-        userId: userResult.id,
+        filterUserId: userResult.id,
       });
 
       expect(Array.isArray(posts)).toBe(true);
@@ -174,6 +192,43 @@ describe("emotionBoard router", () => {
       });
 
       expect(deleteResult).toEqual({ success: true });
+    });
+  });
+
+  describe("toggleLike", () => {
+    it("likes a post and then unlikes it", async () => {
+      const ctx = createPublicContext();
+      const caller = appRouter.createCaller(ctx);
+
+      // Create a user
+      const userResult = await caller.emotionBoard.createUser({
+        name: "いいねテストユーザー",
+        age: "20s",
+        gender: "female",
+      });
+
+      // Create a post
+      const postResult = await caller.emotionBoard.createPost({
+        userId: userResult.id,
+        boardCategory: "work",
+        emotionCategory: "happy",
+        when: new Date(),
+        what: "いいねテスト投稿",
+      });
+
+      // Like the post
+      const likeResult = await caller.emotionBoard.toggleLike({
+        postId: postResult.id,
+        userId: userResult.id,
+      });
+      expect(likeResult).toEqual({ liked: true });
+
+      // Unlike the post
+      const unlikeResult = await caller.emotionBoard.toggleLike({
+        postId: postResult.id,
+        userId: userResult.id,
+      });
+      expect(unlikeResult).toEqual({ liked: false });
     });
   });
 });

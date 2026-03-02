@@ -8,7 +8,8 @@ import {
   getEmotionBoardUser, 
   createEmotionBoardPost, 
   getEmotionBoardPosts, 
-  deleteEmotionBoardPost 
+  deleteEmotionBoardPost,
+  toggleEmotionBoardLike,
 } from "./db";
 import { nanoid } from "nanoid";
 
@@ -59,10 +60,10 @@ export const appRouter = router({
         boardCategory: z.enum(["work", "family", "school", "other"]),
         emotionCategory: z.enum(["happy", "sad", "tired", "angry"]),
         when: z.date(),
-        where: z.string().min(1).max(255),
-        who: z.string().min(1).max(255),
+        where: z.string().max(255).optional().default(''),
+        who: z.string().max(255).optional().default(''),
         what: z.string().min(1),
-        how: z.string().min(1),
+        how: z.string().optional().default(''),
       }))
       .mutation(async ({ input }) => {
         const postId = nanoid();
@@ -82,10 +83,20 @@ export const appRouter = router({
 
     getPosts: publicProcedure
       .input(z.object({
-        userId: z.string().optional(),
+        currentUserId: z.string().optional(),
+        filterUserId: z.string().optional(),
       }).optional())
       .query(async ({ input }) => {
-        return await getEmotionBoardPosts(input?.userId);
+        return await getEmotionBoardPosts(input?.currentUserId, input?.filterUserId);
+      }),
+
+    toggleLike: publicProcedure
+      .input(z.object({
+        postId: z.string(),
+        userId: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        return await toggleEmotionBoardLike(input.postId, input.userId);
       }),
 
     deletePost: publicProcedure

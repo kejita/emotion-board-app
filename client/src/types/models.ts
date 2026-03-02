@@ -29,6 +29,8 @@ export interface Post {
   how: string;
   createdAt: Date;
   updatedAt: Date;
+  likeCount?: number; // いいね数
+  isLiked?: boolean; // 自分がいいねしたか
 }
 
 export interface FilterCriteria {

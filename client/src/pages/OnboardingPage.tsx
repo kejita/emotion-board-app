@@ -72,7 +72,7 @@ export default function OnboardingPage() {
         <div className="text-center mb-8">
           <h1 className="font-display text-foreground mb-2">Emotion Board</h1>
           <p className="font-body-sm font-semibold text-muted-foreground italic mb-3">
-            Write your feelings inside your head in your language
+            Express your feelings in your own words
           </p>
           <p className="text-xs text-muted-foreground leading-relaxed">
             Translate this page into your language using your browser&apos;s translation feature.

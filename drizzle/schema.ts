@@ -63,6 +63,19 @@ export const emotionBoardPosts = mysqlTable("emotion_board_posts", {
 export type EmotionBoardPost = typeof emotionBoardPosts.$inferSelect;
 export type InsertEmotionBoardPost = typeof emotionBoardPosts.$inferInsert;
 
+/**
+ * Emotion Board Likes - Users liking posts
+ */
+export const emotionBoardLikes = mysqlTable("emotion_board_likes", {
+  id: varchar("id", { length: 64 }).primaryKey(),
+  postId: varchar("postId", { length: 64 }).notNull(),
+  userId: varchar("userId", { length: 64 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type EmotionBoardLike = typeof emotionBoardLikes.$inferSelect;
+export type InsertEmotionBoardLike = typeof emotionBoardLikes.$inferInsert;
+
 // Relations
 export const emotionBoardPostsRelations = relations(emotionBoardPosts, ({ one }) => ({
   user: one(emotionBoardUsers, {

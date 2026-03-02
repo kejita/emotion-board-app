@@ -17,6 +17,7 @@ interface AppContextType {
   setUser: (user: User) => void;
   addPost: (post: Omit<Post, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => Promise<void>;
   deletePost: (postId: string) => Promise<void>;
+  toggleLike: (postId: string) => Promise<void>;
   getFilteredPosts: (filter: FilterCriteria) => Post[];
   getCurrentBoardPosts: (boardCategory: BoardCategory) => Post[];
   getCurrentEmotionPosts: (emotionCategory: EmotionCategory) => Post[];
@@ -49,9 +50,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setIsInitialized(true);
   }, []);
 
+  // Get current user ID from localStorage
+  const currentUserId = localStorage.getItem(USER_ID_KEY) ?? undefined;
+
   // Fetch all posts from DB via tRPC
   const { data: postsData, refetch: refetchPosts } = trpc.emotionBoard.getPosts.useQuery(
-    {},
+    { currentUserId },
     { enabled: isInitialized }
   );
 
@@ -59,6 +63,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const posts: Post[] = (postsData ?? []).map((p) => ({
     id: p.id,
     userId: p.userId,
+    userName: p.userName,
     boardCategory: p.boardCategory as BoardCategory,
     emotionCategory: p.emotionCategory as EmotionCategory,
     when: new Date(p.when),
@@ -68,6 +73,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     how: p.how,
     createdAt: new Date(p.createdAt),
     updatedAt: new Date(p.updatedAt),
+    likeCount: Number(p.likeCount ?? 0),
+    isLiked: Boolean(p.isLiked),
   }));
 
   const createPostMutation = trpc.emotionBoard.createPost.useMutation({
@@ -77,6 +84,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   const deletePostMutation = trpc.emotionBoard.deletePost.useMutation({
+    onSuccess: () => {
+      refetchPosts();
+    },
+  });
+
+  const toggleLikeMutation = trpc.emotionBoard.toggleLike.useMutation({
     onSuccess: () => {
       refetchPosts();
     },
@@ -110,6 +123,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     await deletePostMutation.mutateAsync({ postId });
   };
 
+  const toggleLike = async (postId: string) => {
+    if (!user) return;
+    await toggleLikeMutation.mutateAsync({ postId, userId: user.id });
+  };
+
   const getFilteredPosts = useCallback((filter: FilterCriteria): Post[] => {
     return posts.filter((post) => {
       if (filter.boardCategory && post.boardCategory !== filter.boardCategory) return false;
@@ -140,6 +158,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setUser,
         addPost,
         deletePost,
+        toggleLike,
         getFilteredPosts,
         getCurrentBoardPosts,
         getCurrentEmotionPosts,

@@ -39,7 +39,10 @@ export default function HomePage() {
       <div className="sticky top-0 z-40 bg-card border-b border-border">
         <div className="container py-4">
           <div className="flex items-center justify-between mb-4">
-            <h1 className="font-display text-foreground">Emotion Board</h1>
+            <div>
+              <h1 className="font-display text-foreground leading-tight">Emotion Board</h1>
+              <p className="text-xs text-muted-foreground italic mt-0.5">Express your feelings in your own words</p>
+            </div>
             <div className="flex gap-2">
               <button
                 onClick={() => setLocation('/search')}

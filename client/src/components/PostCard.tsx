@@ -4,9 +4,9 @@
  * 自分の投稿のみ削除ボタンを表示
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Post, EMOTION_ICONS, EMOTION_COLORS, EMOTION_LABELS, BOARD_LABELS } from '@/types/models';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Heart } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { toast } from 'sonner';
 
@@ -15,8 +15,9 @@ interface PostCardProps {
 }
 
 export default function PostCard({ post }: PostCardProps) {
-  const { deletePost, user } = useApp();
+  const { deletePost, toggleLike, user } = useApp();
   const isOwner = user?.id === post.userId;
+  const [isLiking, setIsLiking] = useState(false);
 
   const formatDate = (date: Date) => {
     return new Date(date).toLocaleDateString('ja-JP', {
@@ -33,6 +34,22 @@ export default function PostCard({ post }: PostCardProps) {
       toast.success('投稿を削除しました');
     } catch (error) {
       toast.error('削除に失敗しました');
+    }
+  };
+
+  const handleLike = async () => {
+    if (!user) {
+      toast.error('いいねするにはユーザー登録が必要です');
+      return;
+    }
+    if (isLiking) return;
+    setIsLiking(true);
+    try {
+      await toggleLike(post.id);
+    } catch (error) {
+      toast.error('いいねに失敗しました');
+    } finally {
+      setIsLiking(false);
     }
   };
 
@@ -107,11 +124,27 @@ export default function PostCard({ post }: PostCardProps) {
         </div>
       )}
 
-      {/* Author */}
-      <div className="flex items-center justify-end pt-2 border-t border-border">
+      {/* Footer: Author + Like */}
+      <div className="flex items-center justify-between pt-2 border-t border-border">
         <span className="font-body-sm text-muted-foreground text-xs">
           👤 {post.userName ?? '匿名ユーザー'}
         </span>
+        <button
+          onClick={handleLike}
+          disabled={isLiking}
+          className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold transition-all ${
+            post.isLiked
+              ? 'bg-rose-100 text-rose-500 hover:bg-rose-200'
+              : 'bg-secondary text-muted-foreground hover:bg-rose-50 hover:text-rose-400'
+          }`}
+        >
+          <Heart
+            className={`w-3.5 h-3.5 transition-transform ${
+              post.isLiked ? 'fill-rose-500 scale-110' : ''
+            } ${isLiking ? 'animate-pulse' : ''}`}
+          />
+          <span>{post.likeCount ?? 0}</span>
+        </button>
       </div>
     </div>
   );

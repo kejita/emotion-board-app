@@ -1,6 +1,6 @@
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, emotionBoardUsers, emotionBoardPosts, InsertEmotionBoardUser, InsertEmotionBoardPost } from "../drizzle/schema";
+import { InsertUser, users, emotionBoardUsers, emotionBoardPosts, emotionBoardLikes, InsertEmotionBoardUser, InsertEmotionBoardPost } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -119,13 +119,14 @@ export async function createEmotionBoardPost(post: InsertEmotionBoardPost) {
   return result;
 }
 
-export async function getEmotionBoardPosts(userId?: string) {
+export async function getEmotionBoardPosts(currentUserId?: string, filterUserId?: string) {
   const db = await getDb();
   if (!db) {
     return [];
   }
 
-  const query = db
+  // Get posts with user name and like count
+  const postsQuery = db
     .select({
       id: emotionBoardPosts.id,
       userId: emotionBoardPosts.userId,
@@ -139,16 +140,49 @@ export async function getEmotionBoardPosts(userId?: string) {
       createdAt: emotionBoardPosts.createdAt,
       updatedAt: emotionBoardPosts.updatedAt,
       userName: emotionBoardUsers.name,
+      likeCount: sql<number>`(SELECT COUNT(*) FROM emotion_board_likes WHERE emotion_board_likes.postId = ${emotionBoardPosts.id})`,
+      isLiked: currentUserId
+        ? sql<boolean>`EXISTS(SELECT 1 FROM emotion_board_likes WHERE emotion_board_likes.postId = ${emotionBoardPosts.id} AND emotion_board_likes.userId = ${currentUserId})`
+        : sql<boolean>`false`,
     })
     .from(emotionBoardPosts)
     .leftJoin(emotionBoardUsers, eq(emotionBoardPosts.userId, emotionBoardUsers.id))
     .orderBy(desc(emotionBoardPosts.createdAt));
 
-  if (userId) {
-    return await query.where(eq(emotionBoardPosts.userId, userId));
+  if (filterUserId) {
+    return await postsQuery.where(eq(emotionBoardPosts.userId, filterUserId));
   }
 
-  return await query;
+  return await postsQuery;
+}
+
+export async function toggleEmotionBoardLike(postId: string, userId: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // Check if already liked
+  const existing = await db
+    .select()
+    .from(emotionBoardLikes)
+    .where(and(eq(emotionBoardLikes.postId, postId), eq(emotionBoardLikes.userId, userId)))
+    .limit(1);
+
+  if (existing.length > 0) {
+    // Unlike
+    await db
+      .delete(emotionBoardLikes)
+      .where(and(eq(emotionBoardLikes.postId, postId), eq(emotionBoardLikes.userId, userId)));
+    return { liked: false };
+  } else {
+    // Like
+    const { nanoid } = await import("nanoid");
+    await db.insert(emotionBoardLikes).values({
+      id: nanoid(),
+      postId,
+      userId,
+    });
+    return { liked: true };
+  }
 }
 
 export async function deleteEmotionBoardPost(postId: string) {

@@ -35,3 +35,6 @@
 - [x] 投稿カードに投稿者名（ニックネーム）を表示する
 - [x] オンボーディング画面のタイトル下にサブタイトルと翻訳案内文を追加
 - [x] index.htmlにサブタイトルと説明文をmetaタグとして追加
+- [x] Likeボタンを投稿カードに追加（DBにlikesテーブル作成・API実装・UI実装）
+- [x] サブタイトルを "Express your feelings in your own words" に変更（オンボーディング・index.html）
+- [x] ホーム画面にもサブタイトルを追加
