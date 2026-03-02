@@ -10,7 +10,7 @@
 
 import React, { useState } from 'react';
 import { useApp } from '@/contexts/AppContext';
-import { BoardCategory, EmotionCategory, BOARD_LABELS, EMOTION_ICONS, EMOTION_LABELS, EMOTION_COLORS } from '@/types/models';
+import { BoardCategory, EmotionCategory, BOARD_LABELS, EMOTION_ICONS, EMOTION_LABELS, EMOTION_SHORT_LABELS, EMOTION_COLORS } from '@/types/models';
 import { Button } from '@/components/ui/button';
 import { Plus, Search, User } from 'lucide-react';
 import PostCard from '@/components/PostCard';
@@ -128,7 +128,7 @@ export default function HomePage() {
               >
                 <span className="text-2xl mb-1">{EMOTION_ICONS[emotion]}</span>
                 <span className="font-body-sm text-foreground text-center text-xs">
-                  {EMOTION_LABELS[emotion].split('ったこと')[0]}
+                  {EMOTION_SHORT_LABELS[emotion]}
                 </span>
               </button>
             ))}

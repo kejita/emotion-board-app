@@ -47,6 +47,13 @@ export const EMOTION_LABELS: Record<EmotionCategory, string> = {
   angry: '怒りを覚えたこと',
 };
 
+export const EMOTION_SHORT_LABELS: Record<EmotionCategory, string> = {
+  happy: 'うれしい',
+  sad: '悲しい',
+  tired: 'つらい',
+  angry: '怒り',
+};
+
 export const EMOTION_ICONS: Record<EmotionCategory, string> = {
   happy: '😊',
   sad: '😢',
