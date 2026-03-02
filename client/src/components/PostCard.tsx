@@ -103,7 +103,7 @@ export default function PostCard({ post }: PostCardProps) {
           <span className="font-body-sm font-semibold text-muted-foreground min-w-16">
             どんなふうに：
           </span>
-          <span className="font-body-sm text-muted-foreground italic">{post.how}</span>
+          <span className="font-body-sm text-muted-foreground">{post.how}</span>
         </div>
       )}
     </div>
