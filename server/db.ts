@@ -195,3 +195,29 @@ export async function deleteEmotionBoardPost(postId: string) {
   const result = await db.delete(emotionBoardPosts).where(eq(emotionBoardPosts.id, postId));
   return result;
 }
+
+/**
+ * Delete specific test records by their IDs.
+ * Used in test afterAll() to clean up data created during test runs.
+ */
+export async function cleanupTestData(userIds: string[], postIds: string[]) {
+  const db = await getDb();
+  if (!db) return;
+
+  if (postIds.length > 0) {
+    // Delete likes for these posts first (FK order)
+    for (const postId of postIds) {
+      await db.delete(emotionBoardLikes).where(eq(emotionBoardLikes.postId, postId));
+    }
+    // Delete posts
+    for (const postId of postIds) {
+      await db.delete(emotionBoardPosts).where(eq(emotionBoardPosts.id, postId));
+    }
+  }
+
+  if (userIds.length > 0) {
+    for (const userId of userIds) {
+      await db.delete(emotionBoardUsers).where(eq(emotionBoardUsers.id, userId));
+    }
+  }
+}

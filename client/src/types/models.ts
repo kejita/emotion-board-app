@@ -130,6 +130,12 @@ export const COUNTRIES: { code: string; flag: string; name: string; nameEn: stri
 
 export function getCountryDisplay(code: string): string {
   const c = COUNTRIES.find((c) => c.code === code);
+  if (!c) return code ? '🌍' : '🌍';
+  return c.flag;
+}
+
+export function getCountryFullDisplay(code: string): string {
+  const c = COUNTRIES.find((c) => c.code === code);
   if (!c) return code || '🌍';
   return `${c.flag} ${c.nameEn}`;
 }

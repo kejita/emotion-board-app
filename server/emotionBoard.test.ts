@@ -1,5 +1,6 @@
-import { describe, expect, it } from "vitest";
+import { afterAll, describe, expect, it } from "vitest";
 import { appRouter } from "./routers";
+import { cleanupTestData } from "./db";
 import type { TrpcContext } from "./_core/context";
 
 function createPublicContext(): TrpcContext {
@@ -15,6 +16,15 @@ function createPublicContext(): TrpcContext {
   };
 }
 
+// Track all test-created IDs for cleanup
+const testUserIds: string[] = [];
+const testPostIds: string[] = [];
+
+afterAll(async () => {
+  // Clean up all test data created during this test run
+  await cleanupTestData(testUserIds, testPostIds);
+});
+
 describe("emotionBoard router", () => {
   describe("createUser", () => {
     it("creates a new emotion board user", async () => {
@@ -27,6 +37,7 @@ describe("emotionBoard router", () => {
         gender: "female",
       });
 
+      testUserIds.push(result.id);
       expect(result).toHaveProperty("id");
       expect(result.id).toMatch(/^[a-z0-9_-]+$/i);
     });
@@ -42,6 +53,7 @@ describe("emotionBoard router", () => {
         country: "JP",
       });
 
+      testUserIds.push(result.id);
       expect(result).toHaveProperty("id");
       expect(result.id).toMatch(/^[a-z0-9_-]+$/i);
     });
@@ -68,14 +80,13 @@ describe("emotionBoard router", () => {
       const ctx = createPublicContext();
       const caller = appRouter.createCaller(ctx);
 
-      // First create a user
       const userResult = await caller.emotionBoard.createUser({
         name: "テストユーザー",
         age: "20s",
         gender: "female",
       });
+      testUserIds.push(userResult.id);
 
-      // Then create a post with all fields
       const postResult = await caller.emotionBoard.createPost({
         userId: userResult.id,
         boardCategory: "work",
@@ -86,6 +97,7 @@ describe("emotionBoard router", () => {
         what: "プレゼンが成功した",
         how: "とても嬉しかった",
       });
+      testPostIds.push(postResult.id);
 
       expect(postResult).toHaveProperty("id");
       expect(postResult.id).toMatch(/^[a-z0-9_-]+$/i);
@@ -95,14 +107,13 @@ describe("emotionBoard router", () => {
       const ctx = createPublicContext();
       const caller = appRouter.createCaller(ctx);
 
-      // First create a user
       const userResult = await caller.emotionBoard.createUser({
         name: "テストユーザー最小",
         age: "30s",
         gender: "male",
       });
+      testUserIds.push(userResult.id);
 
-      // Create a post with only required field
       const postResult = await caller.emotionBoard.createPost({
         userId: userResult.id,
         boardCategory: "other",
@@ -110,6 +121,7 @@ describe("emotionBoard router", () => {
         when: new Date(),
         what: "最小限の投稿",
       });
+      testPostIds.push(postResult.id);
 
       expect(postResult).toHaveProperty("id");
     });
@@ -147,15 +159,14 @@ describe("emotionBoard router", () => {
       const ctx = createPublicContext();
       const caller = appRouter.createCaller(ctx);
 
-      // Create a user
       const userResult = await caller.emotionBoard.createUser({
         name: "テストユーザー2",
         age: "30s",
         gender: "male",
       });
+      testUserIds.push(userResult.id);
 
-      // Create a post
-      await caller.emotionBoard.createPost({
+      const postResult = await caller.emotionBoard.createPost({
         userId: userResult.id,
         boardCategory: "family",
         emotionCategory: "sad",
@@ -165,8 +176,8 @@ describe("emotionBoard router", () => {
         what: "悲しいことがあった",
         how: "落ち込んでいる",
       });
+      testPostIds.push(postResult.id);
 
-      // Get posts for this user using filterUserId
       const posts = await caller.emotionBoard.getPosts({
         filterUserId: userResult.id,
       });
@@ -182,14 +193,13 @@ describe("emotionBoard router", () => {
       const ctx = createPublicContext();
       const caller = appRouter.createCaller(ctx);
 
-      // Create a user
       const userResult = await caller.emotionBoard.createUser({
         name: "テストユーザー3",
         age: "40s",
         gender: "other",
       });
+      testUserIds.push(userResult.id);
 
-      // Create a post
       const postResult = await caller.emotionBoard.createPost({
         userId: userResult.id,
         boardCategory: "school",
@@ -200,8 +210,8 @@ describe("emotionBoard router", () => {
         what: "怒られた",
         how: "腹が立っている",
       });
+      // Note: this post gets deleted in the test itself, so no need to add to testPostIds
 
-      // Delete the post
       const deleteResult = await caller.emotionBoard.deletePost({
         postId: postResult.id,
       });
@@ -215,14 +225,13 @@ describe("emotionBoard router", () => {
       const ctx = createPublicContext();
       const caller = appRouter.createCaller(ctx);
 
-      // Create a user
       const userResult = await caller.emotionBoard.createUser({
         name: "いいねテストユーザー",
         age: "20s",
         gender: "female",
       });
+      testUserIds.push(userResult.id);
 
-      // Create a post
       const postResult = await caller.emotionBoard.createPost({
         userId: userResult.id,
         boardCategory: "work",
@@ -230,6 +239,7 @@ describe("emotionBoard router", () => {
         when: new Date(),
         what: "いいねテスト投稿",
       });
+      testPostIds.push(postResult.id);
 
       // Like the post
       const likeResult = await caller.emotionBoard.toggleLike({
