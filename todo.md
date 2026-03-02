@@ -38,3 +38,5 @@
 - [x] Likeボタンを投稿カードに追加（DBにlikesテーブル作成・API実装・UI実装）
 - [x] サブタイトルを "Express your feelings in your own words" に変更（オンボーディング・index.html）
 - [x] ホーム画面にもサブタイトルを追加
+- [x] サムネイル画像をCDNにアップロードしてOGP画像として設定
+- [x] SEO対策（日本語・英語）: title, description, keywords, OGP, Twitter Card, hreflang, canonical, structured data
