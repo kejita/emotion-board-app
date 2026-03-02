@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { useApp } from '@/contexts/AppContext';
 import { User, AgeGroup, Gender, AGE_GROUP_LABELS, GENDER_LABELS, COUNTRIES } from '@/types/models';
 import { trpc } from '@/lib/trpc';
+import CreatedBy from '@/components/CreatedBy';
 
 // DBのage enumに合わせたマッピング
 const AGE_TO_DB: Record<AgeGroup, '10s' | '20s' | '30s' | '40s' | '50s+'> = {
@@ -183,6 +184,9 @@ export default function OnboardingPage() {
             ※ ユーザー名はニックネーム（匿名）です。年齢・性別・国のみ記録されます。
           </p>
         </div>
+
+        {/* Created By */}
+        <CreatedBy />
       </div>
     </div>
   );

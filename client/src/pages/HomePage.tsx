@@ -14,6 +14,7 @@ import { BoardCategory, EmotionCategory, BOARD_LABELS, EMOTION_ICONS, EMOTION_LA
 import { Button } from '@/components/ui/button';
 import { Plus, Search, User } from 'lucide-react';
 import PostCard from '@/components/PostCard';
+import CreatedBy from '@/components/CreatedBy';
 import { useLocation } from 'wouter';
 
 const BOARD_CATEGORIES: BoardCategory[] = ['work', 'family', 'school', 'other'];
@@ -100,6 +101,11 @@ export default function HomePage() {
             ))}
           </div>
         )}
+      </div>
+
+      {/* Created By Footer */}
+      <div className="pb-4">
+        <CreatedBy />
       </div>
 
       {/* Floating Action Button */}

@@ -1,0 +1,15 @@
+{
+  "query": "SELECT\n  (SELECT COUNT(*) FROM emotion_board_users) AS users,\n  (SELECT COUNT(*) FROM emotion_board_posts) AS posts,\n  (SELECT COUNT(*) FROM emotion_board_likes) AS likes;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 23uHapfiyb36WAz.root --database cvxJnDu67qo88yDFvdSTsi --execute SELECT\n  (SELECT COUNT(*) FROM emotion_board_users) AS users,\n  (SELECT COUNT(*) FROM emotion_board_posts) AS posts,\n  (SELECT COUNT(*) FROM emotion_board_likes) AS likes;",
+  "rows": [
+    {
+      "users": "10",
+      "posts": "6",
+      "likes": "0"
+    }
+  ],
+  "messages": [],
+  "stdout": "users\tposts\tlikes\n10\t6\t0\n",
+  "stderr": "",
+  "execution_time_ms": 1633
+}
