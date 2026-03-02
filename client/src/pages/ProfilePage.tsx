@@ -1,6 +1,6 @@
 /**
  * Profile Page
- * プロフィール画面 - ユーザー情報と投稿履歴
+ * プロフィール画面 - ユーザー情報と自分の投稿履歴
  */
 
 import React from 'react';
@@ -10,11 +10,10 @@ import { useApp } from '@/contexts/AppContext';
 import { AGE_GROUP_LABELS, GENDER_LABELS } from '@/types/models';
 import { ArrowLeft, LogOut } from 'lucide-react';
 import PostCard from '@/components/PostCard';
-import { storage } from '@/lib/storage';
 
 export default function ProfilePage() {
   const [, setLocation] = useLocation();
-  const { user, posts, setUser } = useApp();
+  const { user, posts } = useApp();
 
   if (!user) {
     return null;
@@ -24,10 +23,9 @@ export default function ProfilePage() {
 
   const handleLogout = () => {
     if (confirm('ログアウトしますか？')) {
-      storage.clearUser();
-      storage.clearPosts();
-      setLocation('/');
-      window.location.reload();
+      localStorage.removeItem('emotion_board_user_id');
+      localStorage.removeItem('emotion_board_user_data');
+      window.location.href = '/';
     }
   };
 
@@ -85,7 +83,7 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <p className="font-body-sm text-muted-foreground mb-1">投稿数</p>
+              <p className="font-body-sm text-muted-foreground mb-1">自分の投稿数</p>
               <p className="font-body text-foreground">{userPosts.length}件</p>
             </div>
           </div>
@@ -105,10 +103,10 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Posts History */}
+        {/* My Posts History */}
         <div>
           <h2 className="font-subheading text-foreground mb-4">
-            投稿履歴（{userPosts.length}件）
+            自分の投稿（{userPosts.length}件）
           </h2>
           {userPosts.length === 0 ? (
             <div className="text-center py-12">

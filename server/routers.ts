@@ -56,7 +56,7 @@ export const appRouter = router({
     createPost: publicProcedure
       .input(z.object({
         userId: z.string(),
-        boardCategory: z.enum(["work", "home", "school", "other"]),
+        boardCategory: z.enum(["work", "family", "school", "other"]),
         emotionCategory: z.enum(["happy", "sad", "tired", "angry"]),
         when: z.date(),
         where: z.string().min(1).max(255),

@@ -1,6 +1,7 @@
 /**
  * Post Page
  * 投稿作成画面 - 5W1Hフォーム
+ * DBに投稿を保存
  */
 
 import React, { useState } from 'react';
@@ -9,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { useApp } from '@/contexts/AppContext';
 import { BoardCategory, EmotionCategory, BOARD_LABELS, EMOTION_LABELS, EMOTION_ICONS } from '@/types/models';
 import { ArrowLeft } from 'lucide-react';
+import { toast } from 'sonner';
 
 const BOARD_CATEGORIES: BoardCategory[] = ['work', 'family', 'school', 'other'];
 const EMOTION_CATEGORIES: EmotionCategory[] = ['happy', 'sad', 'tired', 'angry'];
@@ -30,13 +32,13 @@ export default function PostPage() {
     e.preventDefault();
 
     if (!what.trim()) {
-      alert('「何を」は必須です');
+      toast.error('「何を」は必須です');
       return;
     }
 
     setIsSubmitting(true);
     try {
-      addPost({
+      await addPost({
         boardCategory: selectedBoard,
         emotionCategory: selectedEmotion,
         when: new Date(when),
@@ -46,10 +48,11 @@ export default function PostPage() {
         how,
       });
 
+      toast.success('投稿しました！');
       setLocation('/');
     } catch (error) {
       console.error('Failed to create post:', error);
-      alert('投稿の作成に失敗しました');
+      toast.error('投稿の作成に失敗しました');
     } finally {
       setIsSubmitting(false);
     }

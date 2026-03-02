@@ -1,21 +1,34 @@
 /**
  * Onboarding Page
  * ユーザー登録画面 - 初回アクセス時にユーザー名・年齢・性別を登録
+ * DBにユーザーを作成し、IDをローカルストレージに保存
  */
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useApp } from '@/contexts/AppContext';
 import { User, AgeGroup, Gender, AGE_GROUP_LABELS, GENDER_LABELS } from '@/types/models';
-import { nanoid } from 'nanoid';
+import { trpc } from '@/lib/trpc';
+
+// DBのage enumに合わせたマッピング
+const AGE_TO_DB: Record<AgeGroup, '10s' | '20s' | '30s' | '40s' | '50s+'> = {
+  '10s': '10s',
+  '20s': '20s',
+  '30s': '30s',
+  '40s': '40s',
+  '50plus': '50s+',
+};
 
 export default function OnboardingPage() {
   const { setUser } = useApp();
   const [userName, setUserName] = useState('');
   const [selectedAge, setSelectedAge] = useState<AgeGroup | null>(null);
   const [selectedGender, setSelectedGender] = useState<Gender | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = () => {
+  const createUserMutation = trpc.emotionBoard.createUser.useMutation();
+
+  const handleSubmit = async () => {
     if (!userName.trim()) {
       alert('ユーザー名を入力してください');
       return;
@@ -25,15 +38,31 @@ export default function OnboardingPage() {
       return;
     }
 
-    const newUser: User = {
-      id: nanoid(),
-      name: userName.trim(),
-      age: selectedAge,
-      gender: selectedGender,
-      createdAt: new Date(),
-    };
+    setIsSubmitting(true);
+    try {
+      // DBにユーザーを作成
+      const result = await createUserMutation.mutateAsync({
+        name: userName.trim(),
+        age: AGE_TO_DB[selectedAge],
+        gender: selectedGender,
+      });
 
-    setUser(newUser);
+      // フロントエンドのUserオブジェクトを作成
+      const newUser: User = {
+        id: result.id,
+        name: userName.trim(),
+        age: selectedAge,
+        gender: selectedGender,
+        createdAt: new Date(),
+      };
+
+      setUser(newUser);
+    } catch (error) {
+      console.error('Failed to create user:', error);
+      alert('ユーザー登録に失敗しました。もう一度お試しください。');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -113,9 +142,9 @@ export default function OnboardingPage() {
           <Button
             onClick={handleSubmit}
             className="w-full py-3 font-body font-semibold text-base"
-            disabled={!userName.trim() || !selectedAge || !selectedGender}
+            disabled={!userName.trim() || !selectedAge || !selectedGender || isSubmitting}
           >
-            始める
+            {isSubmitting ? '登録中...' : '始める'}
           </Button>
 
           {/* Info Text */}

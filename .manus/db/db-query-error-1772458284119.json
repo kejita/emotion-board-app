@@ -1,0 +1,8 @@
+{
+  "query": "ALTER TABLE `emotion_board_posts` MODIFY COLUMN `boardCategory` enum('work','family','school','other') NOT NULL;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 23uHapfiyb36WAz.root --database cvxJnDu67qo88yDFvdSTsi --execute ALTER TABLE `emotion_board_posts` MODIFY COLUMN `boardCategory` enum('work','family','school','other') NOT NULL;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1265 (01000) at line 1: Data truncated for column 'boardCategory', value is 'home'"
+  ]
+}

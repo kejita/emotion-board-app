@@ -1,0 +1,1 @@
+ALTER TABLE `emotion_board_posts` MODIFY COLUMN `boardCategory` enum('work','family','school','other') NOT NULL;

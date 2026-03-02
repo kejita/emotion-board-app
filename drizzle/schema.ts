@@ -48,7 +48,7 @@ export type InsertEmotionBoardUser = typeof emotionBoardUsers.$inferInsert;
 export const emotionBoardPosts = mysqlTable("emotion_board_posts", {
   id: varchar("id", { length: 64 }).primaryKey(),
   userId: varchar("userId", { length: 64 }).notNull(),
-  boardCategory: mysqlEnum("boardCategory", ["work", "home", "school", "other"]).notNull(),
+  boardCategory: mysqlEnum("boardCategory", ["work", "family", "school", "other"]).notNull(),
   emotionCategory: mysqlEnum("emotionCategory", ["happy", "sad", "tired", "angry"]).notNull(),
   // 5W1H fields
   when: timestamp("when").notNull(), // When did it happen

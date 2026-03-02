@@ -1,118 +1,149 @@
 /**
  * App Context
  * アプリケーション全体の状態管理
+ * tRPC APIを使用してデータベースと連携
  */
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { User, Post, BoardCategory, EmotionCategory, FilterCriteria } from '@/types/models';
-import { storage } from '@/lib/storage';
-import { nanoid } from 'nanoid';
+import { trpc } from '@/lib/trpc';
+
+const USER_ID_KEY = 'emotion_board_user_id';
 
 interface AppContextType {
   user: User | null;
   posts: Post[];
+  isLoading: boolean;
   setUser: (user: User) => void;
-  addPost: (post: Omit<Post, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => void;
-  deletePost: (postId: string) => void;
+  addPost: (post: Omit<Post, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => Promise<void>;
+  deletePost: (postId: string) => Promise<void>;
   getFilteredPosts: (filter: FilterCriteria) => Post[];
   getCurrentBoardPosts: (boardCategory: BoardCategory) => Post[];
   getCurrentEmotionPosts: (emotionCategory: EmotionCategory) => Post[];
+  refetchPosts: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUserState] = useState<User | null>(null);
-  const [posts, setPostsState] = useState<Post[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Initialize from storage
+  // Load user from localStorage on mount
   useEffect(() => {
-    const storedUser = storage.getUser();
-    const storedPosts = storage.getPosts();
-    setUserState(storedUser);
-    setPostsState(storedPosts);
+    const storedUserId = localStorage.getItem(USER_ID_KEY);
+    if (storedUserId) {
+      const storedUserData = localStorage.getItem('emotion_board_user_data');
+      if (storedUserData) {
+        try {
+          const parsedUser = JSON.parse(storedUserData);
+          setUserState({
+            ...parsedUser,
+            createdAt: new Date(parsedUser.createdAt),
+          });
+        } catch (e) {
+          console.error('Failed to parse user data', e);
+        }
+      }
+    }
     setIsInitialized(true);
   }, []);
 
+  // Fetch all posts from DB via tRPC
+  const { data: postsData, refetch: refetchPosts } = trpc.emotionBoard.getPosts.useQuery(
+    {},
+    { enabled: isInitialized }
+  );
+
+  // Convert DB posts to frontend Post type
+  const posts: Post[] = (postsData ?? []).map((p) => ({
+    id: p.id,
+    userId: p.userId,
+    boardCategory: p.boardCategory as BoardCategory,
+    emotionCategory: p.emotionCategory as EmotionCategory,
+    when: new Date(p.when),
+    where: p.where,
+    who: p.who,
+    what: p.what,
+    how: p.how,
+    createdAt: new Date(p.createdAt),
+    updatedAt: new Date(p.updatedAt),
+  }));
+
+  const createPostMutation = trpc.emotionBoard.createPost.useMutation({
+    onSuccess: () => {
+      refetchPosts();
+    },
+  });
+
+  const deletePostMutation = trpc.emotionBoard.deletePost.useMutation({
+    onSuccess: () => {
+      refetchPosts();
+    },
+  });
+
   const setUser = (newUser: User) => {
     setUserState(newUser);
-    storage.setUser(newUser);
+    localStorage.setItem(USER_ID_KEY, newUser.id);
+    localStorage.setItem('emotion_board_user_data', JSON.stringify(newUser));
   };
 
-  const addPost = (postData: Omit<Post, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => {
+  const addPost = async (postData: Omit<Post, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => {
     if (!user) {
       console.error('Cannot add post without user');
       return;
     }
 
-    const newPost: Post = {
-      ...postData,
-      id: nanoid(),
+    await createPostMutation.mutateAsync({
       userId: user.id,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    setPostsState((prev) => [...prev, newPost]);
-    storage.addPost(newPost);
-  };
-
-  const deletePost = (postId: string) => {
-    setPostsState((prev) => prev.filter((p) => p.id !== postId));
-    storage.deletePost(postId);
-  };
-
-  const getFilteredPosts = (filter: FilterCriteria): Post[] => {
-    return posts.filter((post) => {
-      if (filter.boardCategory && post.boardCategory !== filter.boardCategory) {
-        return false;
-      }
-      if (filter.emotionCategory && post.emotionCategory !== filter.emotionCategory) {
-        return false;
-      }
-      if (filter.whenStart && post.when < filter.whenStart) {
-        return false;
-      }
-      if (filter.whenEnd && post.when > filter.whenEnd) {
-        return false;
-      }
-      if (filter.where && !post.where.toLowerCase().includes(filter.where.toLowerCase())) {
-        return false;
-      }
-      if (filter.who && !post.who.toLowerCase().includes(filter.who.toLowerCase())) {
-        return false;
-      }
-      if (filter.how && !post.how.toLowerCase().includes(filter.how.toLowerCase())) {
-        return false;
-      }
-      return true;
+      boardCategory: postData.boardCategory as 'work' | 'family' | 'school' | 'other',
+      emotionCategory: postData.emotionCategory as 'happy' | 'sad' | 'tired' | 'angry',
+      when: postData.when,
+      where: postData.where,
+      who: postData.who,
+      what: postData.what,
+      how: postData.how,
     });
   };
 
-  const getCurrentBoardPosts = (boardCategory: BoardCategory): Post[] => {
+  const deletePost = async (postId: string) => {
+    await deletePostMutation.mutateAsync({ postId });
+  };
+
+  const getFilteredPosts = useCallback((filter: FilterCriteria): Post[] => {
+    return posts.filter((post) => {
+      if (filter.boardCategory && post.boardCategory !== filter.boardCategory) return false;
+      if (filter.emotionCategory && post.emotionCategory !== filter.emotionCategory) return false;
+      if (filter.whenStart && post.when < filter.whenStart) return false;
+      if (filter.whenEnd && post.when > filter.whenEnd) return false;
+      if (filter.where && !post.where.toLowerCase().includes(filter.where.toLowerCase())) return false;
+      if (filter.who && !post.who.toLowerCase().includes(filter.who.toLowerCase())) return false;
+      if (filter.how && !post.how.toLowerCase().includes(filter.how.toLowerCase())) return false;
+      return true;
+    });
+  }, [posts]);
+
+  const getCurrentBoardPosts = useCallback((boardCategory: BoardCategory): Post[] => {
     return posts.filter((post) => post.boardCategory === boardCategory);
-  };
+  }, [posts]);
 
-  const getCurrentEmotionPosts = (emotionCategory: EmotionCategory): Post[] => {
+  const getCurrentEmotionPosts = useCallback((emotionCategory: EmotionCategory): Post[] => {
     return posts.filter((post) => post.emotionCategory === emotionCategory);
-  };
-
-  if (!isInitialized) {
-    return <div>Loading...</div>;
-  }
+  }, [posts]);
 
   return (
     <AppContext.Provider
       value={{
         user,
         posts,
+        isLoading: !isInitialized,
         setUser,
         addPost,
         deletePost,
         getFilteredPosts,
         getCurrentBoardPosts,
         getCurrentEmotionPosts,
+        refetchPosts,
       }}
     >
       {children}
