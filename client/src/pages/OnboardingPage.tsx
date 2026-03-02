@@ -71,8 +71,11 @@ export default function OnboardingPage() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="font-display text-foreground mb-2">Emotion Board</h1>
-          <p className="font-body text-muted-foreground">
-            感情を共有する掲示板へようこそ
+          <p className="font-body-sm font-semibold text-muted-foreground italic mb-3">
+            Write your feelings inside your head in your language
+          </p>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            Translate this page into your language using your browser&apos;s translation feature.
           </p>
         </div>
 

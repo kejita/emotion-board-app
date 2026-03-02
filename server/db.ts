@@ -124,12 +124,31 @@ export async function getEmotionBoardPosts(userId?: string) {
   if (!db) {
     return [];
   }
-  
+
+  const query = db
+    .select({
+      id: emotionBoardPosts.id,
+      userId: emotionBoardPosts.userId,
+      boardCategory: emotionBoardPosts.boardCategory,
+      emotionCategory: emotionBoardPosts.emotionCategory,
+      when: emotionBoardPosts.when,
+      where: emotionBoardPosts.where,
+      who: emotionBoardPosts.who,
+      what: emotionBoardPosts.what,
+      how: emotionBoardPosts.how,
+      createdAt: emotionBoardPosts.createdAt,
+      updatedAt: emotionBoardPosts.updatedAt,
+      userName: emotionBoardUsers.name,
+    })
+    .from(emotionBoardPosts)
+    .leftJoin(emotionBoardUsers, eq(emotionBoardPosts.userId, emotionBoardUsers.id))
+    .orderBy(desc(emotionBoardPosts.createdAt));
+
   if (userId) {
-    return await db.select().from(emotionBoardPosts).where(eq(emotionBoardPosts.userId, userId)).orderBy(desc(emotionBoardPosts.createdAt));
+    return await query.where(eq(emotionBoardPosts.userId, userId));
   }
-  
-  return await db.select().from(emotionBoardPosts).orderBy(desc(emotionBoardPosts.createdAt));
+
+  return await query;
 }
 
 export async function deleteEmotionBoardPost(postId: string) {

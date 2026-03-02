@@ -99,13 +99,20 @@ export default function PostCard({ post }: PostCardProps) {
 
       {/* How */}
       {post.how && (
-        <div className="flex gap-2 text-sm">
+        <div className="flex gap-2 text-sm mb-3">
           <span className="font-body-sm font-semibold text-muted-foreground min-w-16">
             どんなふうに：
           </span>
           <span className="font-body-sm text-muted-foreground">{post.how}</span>
         </div>
       )}
+
+      {/* Author */}
+      <div className="flex items-center justify-end pt-2 border-t border-border">
+        <span className="font-body-sm text-muted-foreground text-xs">
+          👤 {post.userName ?? '匿名ユーザー'}
+        </span>
+      </div>
     </div>
   );
 }

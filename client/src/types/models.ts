@@ -19,6 +19,7 @@ export interface User {
 export interface Post {
   id: string;
   userId: string;
+  userName?: string | null; // 投稿者のニックネーム
   boardCategory: BoardCategory;
   emotionCategory: EmotionCategory;
   when: Date;
