@@ -11,16 +11,28 @@
 
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { lazy, Suspense } from "react";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { AppProvider, useApp } from "./contexts/AppContext";
-import OnboardingPage from "./pages/OnboardingPage";
-import HomePage from "./pages/HomePage";
-import PostPage from "./pages/PostPage";
-import SearchPage from "./pages/SearchPage";
-import ProfilePage from "./pages/ProfilePage";
-import NotFound from "./pages/NotFound";
+
+// Route-based code splitting: each page is loaded only when needed
+const OnboardingPage = lazy(() => import("./pages/OnboardingPage"));
+const HomePage = lazy(() => import("./pages/HomePage"));
+const PostPage = lazy(() => import("./pages/PostPage"));
+const SearchPage = lazy(() => import("./pages/SearchPage"));
+const ProfilePage = lazy(() => import("./pages/ProfilePage"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+
+// Minimal loading fallback — keeps layout stable during chunk load
+function PageLoader() {
+  return (
+    <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+}
 
 function Router() {
   const { user } = useApp();
@@ -29,22 +41,26 @@ function Router() {
   if (!user) {
     return (
       <main>
-        <OnboardingPage />
+        <Suspense fallback={<PageLoader />}>
+          <OnboardingPage />
+        </Suspense>
       </main>
     );
   }
 
   return (
     <main>
-      <Switch>
-        <Route path={"/"} component={HomePage} />
-        <Route path={"/post"} component={PostPage} />
-        <Route path={"/search"} component={SearchPage} />
-        <Route path={"/profile"} component={ProfilePage} />
-        <Route path={"/404"} component={NotFound} />
-        {/* Final fallback route */}
-        <Route component={NotFound} />
-      </Switch>
+      <Suspense fallback={<PageLoader />}>
+        <Switch>
+          <Route path={"/"} component={HomePage} />
+          <Route path={"/post"} component={PostPage} />
+          <Route path={"/search"} component={SearchPage} />
+          <Route path={"/profile"} component={ProfilePage} />
+          <Route path={"/404"} component={NotFound} />
+          {/* Final fallback route */}
+          <Route component={NotFound} />
+        </Switch>
+      </Suspense>
     </main>
   );
 }

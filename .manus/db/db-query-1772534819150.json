@@ -1,0 +1,9 @@
+{
+  "query": "\n-- Index for ORDER BY createdAt DESC (main feed query)\nCREATE INDEX IF NOT EXISTS idx_emotion_board_posts_created_at \n  ON emotion_board_posts (createdAt DESC);\n\n-- Index for filtering posts by userId (profile page)\nCREATE INDEX IF NOT EXISTS idx_emotion_board_posts_user_id \n  ON emotion_board_posts (userId);\n\n-- Index for correlated subquery: COUNT(*) WHERE postId = ?\nCREATE INDEX IF NOT EXISTS idx_emotion_board_likes_post_id \n  ON emotion_board_likes (postId);\n\n-- Composite index for EXISTS(postId, userId) in isLiked subquery\nCREATE INDEX IF NOT EXISTS idx_emotion_board_likes_post_user \n  ON emotion_board_likes (postId, userId);\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 23uHapfiyb36WAz.root --database cvxJnDu67qo88yDFvdSTsi --execute \n-- Index for ORDER BY createdAt DESC (main feed query)\nCREATE INDEX IF NOT EXISTS idx_emotion_board_posts_created_at \n  ON emotion_board_posts (createdAt DESC);\n\n-- Index for filtering posts by userId (profile page)\nCREATE INDEX IF NOT EXISTS idx_emotion_board_posts_user_id \n  ON emotion_board_posts (userId);\n\n-- Index for correlated subquery: COUNT(*) WHERE postId = ?\nCREATE INDEX IF NOT EXISTS idx_emotion_board_likes_post_id \n  ON emotion_board_likes (postId);\n\n-- Composite index for EXISTS(postId, userId) in isLiked subquery\nCREATE INDEX IF NOT EXISTS idx_emotion_board_likes_post_user \n  ON emotion_board_likes (postId, userId);\n",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 3796
+}

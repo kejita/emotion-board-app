@@ -119,13 +119,19 @@ export async function createEmotionBoardPost(post: InsertEmotionBoardPost) {
   return result;
 }
 
-export async function getEmotionBoardPosts(currentUserId?: string, filterUserId?: string) {
+export async function getEmotionBoardPosts(
+  currentUserId?: string,
+  filterUserId?: string,
+  limit = 30,
+  offset = 0
+) {
   const db = await getDb();
   if (!db) {
     return [];
   }
 
   // Get posts with user name and like count
+  // likeCount and isLiked use correlated subqueries — covered by index on emotion_board_likes(postId)
   const postsQuery = db
     .select({
       id: emotionBoardPosts.id,
@@ -148,7 +154,9 @@ export async function getEmotionBoardPosts(currentUserId?: string, filterUserId?
     })
     .from(emotionBoardPosts)
     .leftJoin(emotionBoardUsers, eq(emotionBoardPosts.userId, emotionBoardUsers.id))
-    .orderBy(desc(emotionBoardPosts.createdAt));
+    .orderBy(desc(emotionBoardPosts.createdAt))
+    .limit(limit)
+    .offset(offset);
 
   if (filterUserId) {
     return await postsQuery.where(eq(emotionBoardPosts.userId, filterUserId));

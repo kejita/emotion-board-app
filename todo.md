@@ -53,3 +53,7 @@
 - [x] viewport の maximum-scale=1 を削除してズーム制限を解除
 - [x] メインランドマーク（<main>タグ）をページレイアウトに追加
 - [x] フォーム要素に適切な label を関連付け
+- [x] フォント読み込み最適化（display=swap, preconnect, preload）
+- [x] ルートベースのコード分割（React.lazy + Suspense）
+- [x] DBクエリ最適化（インデックス追加、フィールド絞り込み）
+- [x] サーバーサイドデータプリフェッチ（初期投稿データをHTMLに埋め込み）

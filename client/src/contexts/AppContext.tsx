@@ -53,10 +53,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Get current user ID from localStorage
   const currentUserId = localStorage.getItem(USER_ID_KEY) ?? undefined;
 
+  // Use server-injected initial data (window.__INITIAL_POSTS__) as placeholder
+  // to avoid showing a blank screen while the tRPC query loads.
+  // This eliminates the JS waterfall: data is already in the HTML on first paint.
+  const initialPosts = typeof window !== 'undefined'
+    ? (window as unknown as { __INITIAL_POSTS__?: Record<string, unknown>[] }).__INITIAL_POSTS__
+    : undefined;
+
   // Fetch all posts from DB via tRPC
   const { data: postsData, refetch: refetchPosts } = trpc.emotionBoard.getPosts.useQuery(
     { currentUserId },
-    { enabled: isInitialized }
+    {
+      enabled: isInitialized,
+      // Use server-prefetched data as placeholder until tRPC responds
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      placeholderData: initialPosts as any,
+    }
   );
 
   // Convert DB posts to frontend Post type
