@@ -82,10 +82,10 @@ export default function PostPage() {
         </p>
 
         {/* Board Category Selection */}
-        <div className="mb-8">
-          <label className="font-subheading text-foreground block mb-3">
+        <div className="mb-8" role="group" aria-labelledby="board-label">
+          <p id="board-label" className="font-subheading text-foreground block mb-3">
             掲示板を選択
-          </label>
+          </p>
           <div className="grid grid-cols-2 gap-3">
             {BOARD_CATEGORIES.map((category) => (
               <button
@@ -105,10 +105,10 @@ export default function PostPage() {
         </div>
 
         {/* Emotion Category Selection */}
-        <div className="mb-8">
-          <label className="font-subheading text-foreground block mb-3">
+        <div className="mb-8" role="group" aria-labelledby="emotion-label">
+          <p id="emotion-label" className="font-subheading text-foreground block mb-3">
             感情を選択
-          </label>
+          </p>
           <div className="grid grid-cols-2 gap-3">
             {EMOTION_CATEGORIES.map((emotion) => (
               <button
@@ -130,10 +130,11 @@ export default function PostPage() {
 
         {/* When */}
         <div className="mb-6">
-          <label className="font-body font-semibold text-foreground block mb-2">
+          <label htmlFor="post-when" className="font-body font-semibold text-foreground block mb-2">
             いつ（日時）<span className="ml-2 text-xs text-muted-foreground font-normal">任意</span>
           </label>
           <input
+            id="post-when"
             type="date"
             value={when}
             onChange={(e) => setWhen(e.target.value)}
@@ -143,10 +144,11 @@ export default function PostPage() {
 
         {/* Where */}
         <div className="mb-6">
-          <label className="font-body font-semibold text-foreground block mb-2">
+          <label htmlFor="post-where" className="font-body font-semibold text-foreground block mb-2">
             どこで（場所）<span className="ml-2 text-xs text-muted-foreground font-normal">任意</span>
           </label>
           <input
+            id="post-where"
             type="text"
             placeholder="例：会社、家、学校"
             value={where}
@@ -157,10 +159,11 @@ export default function PostPage() {
 
         {/* Who */}
         <div className="mb-6">
-          <label className="font-body font-semibold text-foreground block mb-2">
+          <label htmlFor="post-who" className="font-body font-semibold text-foreground block mb-2">
             誰から（人物）<span className="ml-2 text-xs text-muted-foreground font-normal">任意</span>
           </label>
           <input
+            id="post-who"
             type="text"
             placeholder="例：上司、友人、家族"
             value={who}
@@ -171,13 +174,15 @@ export default function PostPage() {
 
         {/* What (Required) */}
         <div className="mb-6">
-          <label className="font-body font-semibold text-foreground block mb-2">
+          <label htmlFor="post-what" className="font-body font-semibold text-foreground block mb-2">
             何を（内容）<span className="text-destructive">*</span>
           </label>
           <textarea
+            id="post-what"
             placeholder="言われたことや経験した出来事を詳しく書いてください"
             value={what}
             onChange={(e) => setWhat(e.target.value)}
+            aria-required="true"
             rows={5}
             className="w-full px-4 py-2 border border-border rounded-lg font-body text-foreground bg-card placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary resize-none"
           />
@@ -188,10 +193,11 @@ export default function PostPage() {
 
         {/* How */}
         <div className="mb-8">
-          <label className="font-body font-semibold text-foreground block mb-2">
+          <label htmlFor="post-how" className="font-body font-semibold text-foreground block mb-2">
             どんなふうに（感情・反応）<span className="ml-2 text-xs text-muted-foreground font-normal">任意</span>
           </label>
           <textarea
+            id="post-how"
             placeholder="その時の気持ちや反応を書いてください"
             value={how}
             onChange={(e) => setHow(e.target.value)}

@@ -27,19 +27,25 @@ function Router() {
 
   // Show onboarding if no user
   if (!user) {
-    return <OnboardingPage />;
+    return (
+      <main>
+        <OnboardingPage />
+      </main>
+    );
   }
 
   return (
-    <Switch>
-      <Route path={"/"} component={HomePage} />
-      <Route path={"/post"} component={PostPage} />
-      <Route path={"/search"} component={SearchPage} />
-      <Route path={"/profile"} component={ProfilePage} />
-      <Route path={"/404"} component={NotFound} />
-      {/* Final fallback route */}
-      <Route component={NotFound} />
-    </Switch>
+    <main>
+      <Switch>
+        <Route path={"/"} component={HomePage} />
+        <Route path={"/post"} component={PostPage} />
+        <Route path={"/search"} component={SearchPage} />
+        <Route path={"/profile"} component={ProfilePage} />
+        <Route path={"/404"} component={NotFound} />
+        {/* Final fallback route */}
+        <Route component={NotFound} />
+      </Switch>
+    </main>
   );
 }
 

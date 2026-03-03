@@ -89,23 +89,25 @@ export default function OnboardingPage() {
 
           {/* User Name Input */}
           <div className="mb-8">
-            <label className="font-body font-semibold text-foreground block mb-3">
+            <label htmlFor="username" className="font-body font-semibold text-foreground block mb-3">
               ユーザー名
             </label>
             <input
+              id="username"
               type="text"
               placeholder="ニックネームを入力してください"
               value={userName}
               onChange={(e) => setUserName(e.target.value)}
+              aria-required="true"
               className="w-full px-4 py-3 border border-border rounded-lg font-body text-foreground bg-card placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
 
           {/* Age Selection */}
-          <div className="mb-8">
-            <label className="font-body font-semibold text-foreground block mb-3">
+          <div className="mb-8" role="group" aria-labelledby="age-label">
+            <p id="age-label" className="font-body font-semibold text-foreground block mb-3">
               年齢を選択してください
-            </label>
+            </p>
             <div className="grid grid-cols-2 gap-3">
               {(Object.keys(AGE_GROUP_LABELS) as AgeGroup[]).map((age) => (
                 <button
@@ -124,10 +126,10 @@ export default function OnboardingPage() {
           </div>
 
           {/* Gender Selection */}
-          <div className="mb-8">
-            <label className="font-body font-semibold text-foreground block mb-3">
+          <div className="mb-8" role="group" aria-labelledby="gender-label">
+            <p id="gender-label" className="font-body font-semibold text-foreground block mb-3">
               性別を選択してください
-            </label>
+            </p>
             <div className="grid grid-cols-3 gap-3">
               {(Object.keys(GENDER_LABELS) as Gender[]).map((gender) => (
                 <button
@@ -147,12 +149,13 @@ export default function OnboardingPage() {
 
           {/* Country Selection */}
           <div className="mb-8">
-            <label className="font-body font-semibold text-foreground block mb-3">
+            <label htmlFor="country" className="font-body font-semibold text-foreground block mb-3">
               国を選択してください
               <span className="ml-2 text-xs text-muted-foreground font-normal">任意</span>
             </label>
             <div className="relative">
               <select
+                id="country"
                 value={selectedCountry}
                 onChange={(e) => setSelectedCountry(e.target.value)}
                 className="w-full px-4 py-3 border border-border rounded-lg font-body text-foreground bg-card focus:outline-none focus:ring-2 focus:ring-primary appearance-none cursor-pointer"

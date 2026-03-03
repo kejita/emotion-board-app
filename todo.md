@@ -50,3 +50,6 @@
 - [x] SEOタイトルだ30-60文字に修正（Share what you feel... を含める）
 - [x] sitemap.xmlを作成してclient/publicに配置
 - [x] robots.txtにSitemapディレクティブを追加
+- [x] viewport の maximum-scale=1 を削除してズーム制限を解除
+- [x] メインランドマーク（<main>タグ）をページレイアウトに追加
+- [x] フォーム要素に適切な label を関連付け
