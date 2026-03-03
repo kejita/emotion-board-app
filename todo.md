@@ -48,3 +48,5 @@
 - [x] Created by セクションをオンボーディング・ホーム画面に追加（GitHubアカウント: kejita）
 - [x] SEOキーワードを3-8個に絞り込み（細かい感情語を除外、emotion boardを追加）
 - [x] SEOタイトルだ30-60文字に修正（Share what you feel... を含める）
+- [x] sitemap.xmlを作成してclient/publicに配置
+- [x] robots.txtにSitemapディレクティブを追加
