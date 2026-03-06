@@ -30,6 +30,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [user, setUserState] = useState<User | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
 
+  // Normalize age from DB format ('50s+') to frontend format ('50plus')
+  const normalizeAge = (age: string): string => {
+    if (age === '50s+') return '50plus';
+    return age;
+  };
+
   // Load user from localStorage on mount
   useEffect(() => {
     const storedUserId = localStorage.getItem(USER_ID_KEY);
@@ -40,6 +46,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           const parsedUser = JSON.parse(storedUserData);
           setUserState({
             ...parsedUser,
+            age: normalizeAge(parsedUser.age),
             createdAt: new Date(parsedUser.createdAt),
           });
         } catch (e) {

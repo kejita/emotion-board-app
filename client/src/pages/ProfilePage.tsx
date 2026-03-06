@@ -15,7 +15,7 @@ import ProfileSetupModal from '@/components/ProfileSetupModal';
 
 export default function ProfilePage() {
   const [, setLocation] = useLocation();
-  const { user, posts } = useApp();
+  const { user, posts, isLoading } = useApp();
   const [showProfileModal, setShowProfileModal] = useState(false);
 
   const userPosts = user ? posts.filter((post) => post.userId === user.id) : [];
@@ -32,6 +32,15 @@ export default function ProfilePage() {
   const countryInfo = user?.country
     ? COUNTRIES.find((c) => c.code === user.country)
     : null;
+
+  // Show spinner while localStorage is being read
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background pb-6">
