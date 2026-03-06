@@ -30,10 +30,6 @@ export default function HomePage() {
     (post) => post.boardCategory === selectedBoard && post.emotionCategory === selectedEmotion
   );
 
-  if (!user) {
-    return null;
-  }
-
   return (
     <div className="min-h-screen bg-background pb-24">
       {/* Header */}

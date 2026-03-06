@@ -2,6 +2,7 @@
  * Post Page
  * 投稿作成画面 - 5W1Hフォーム
  * DBに投稿を保存
+ * ユーザー未登録の場合はProfileSetupModalを表示してから投稿
  */
 
 import React, { useState } from 'react';
@@ -11,13 +12,24 @@ import { useApp } from '@/contexts/AppContext';
 import { BoardCategory, EmotionCategory, BOARD_LABELS, EMOTION_LABELS, EMOTION_ICONS } from '@/types/models';
 import { ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
+import ProfileSetupModal from '@/components/ProfileSetupModal';
 
 const BOARD_CATEGORIES: BoardCategory[] = ['work', 'family', 'school', 'other'];
 const EMOTION_CATEGORIES: EmotionCategory[] = ['happy', 'sad', 'tired', 'angry'];
 
+type PendingPostData = {
+  boardCategory: BoardCategory;
+  emotionCategory: EmotionCategory;
+  when: Date;
+  where: string;
+  who: string;
+  what: string;
+  how: string;
+};
+
 export default function PostPage() {
   const [, setLocation] = useLocation();
-  const { addPost } = useApp();
+  const { user, addPost } = useApp();
 
   const [selectedBoard, setSelectedBoard] = useState<BoardCategory>('work');
   const [selectedEmotion, setSelectedEmotion] = useState<EmotionCategory>('happy');
@@ -28,27 +40,23 @@ export default function PostPage() {
   const [how, setHow] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Profile setup modal state for first-time users
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [pendingPost, setPendingPost] = useState<PendingPostData | null>(null);
 
-    if (!what.trim()) {
-      toast.error('「何を」は必須です');
-      return;
-    }
-
+  const submitPost = async (postData: PendingPostData) => {
     setIsSubmitting(true);
     try {
       await addPost({
-        boardCategory: selectedBoard,
-        emotionCategory: selectedEmotion,
+        boardCategory: postData.boardCategory,
+        emotionCategory: postData.emotionCategory,
         country: '', // auto-filled from user profile in AppContext
-        when: new Date(when),
-        where,
-        who,
-        what,
-        how,
+        when: postData.when,
+        where: postData.where,
+        who: postData.who,
+        what: postData.what,
+        how: postData.how,
       });
-
       toast.success('投稿しました！');
       setLocation('/');
     } catch (error) {
@@ -59,8 +67,50 @@ export default function PostPage() {
     }
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!what.trim()) {
+      toast.error('「何を」は必須です');
+      return;
+    }
+
+    const postData: PendingPostData = {
+      boardCategory: selectedBoard,
+      emotionCategory: selectedEmotion,
+      when: new Date(when),
+      where,
+      who,
+      what,
+      how,
+    };
+
+    // If user not registered yet, show profile setup modal first
+    if (!user) {
+      setPendingPost(postData);
+      setShowProfileModal(true);
+      return;
+    }
+
+    await submitPost(postData);
+  };
+
   return (
     <div className="min-h-screen bg-background">
+      {/* Profile setup modal for first-time users */}
+      {showProfileModal && (
+        <ProfileSetupModal
+          onComplete={() => {
+            setShowProfileModal(false);
+            if (pendingPost) submitPost(pendingPost);
+          }}
+          onCancel={() => {
+            setShowProfileModal(false);
+            setPendingPost(null);
+          }}
+        />
+      )}
+
       {/* Header */}
       <div className="sticky top-0 z-40 bg-card border-b border-border">
         <div className="container py-4 flex items-center gap-4">
@@ -212,7 +262,7 @@ export default function PostPage() {
             type="button"
             variant="outline"
             onClick={() => setLocation('/')}
-            className="flex-1"
+            className="flex-1 bg-card"
           >
             キャンセル
           </Button>

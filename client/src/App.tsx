@@ -35,19 +35,6 @@ function PageLoader() {
 }
 
 function Router() {
-  const { user } = useApp();
-
-  // Show onboarding if no user
-  if (!user) {
-    return (
-      <main>
-        <Suspense fallback={<PageLoader />}>
-          <OnboardingPage />
-        </Suspense>
-      </main>
-    );
-  }
-
   return (
     <main>
       <Suspense fallback={<PageLoader />}>
@@ -56,6 +43,7 @@ function Router() {
           <Route path={"/post"} component={PostPage} />
           <Route path={"/search"} component={SearchPage} />
           <Route path={"/profile"} component={ProfilePage} />
+          <Route path={"/onboarding"} component={OnboardingPage} />
           <Route path={"/404"} component={NotFound} />
           {/* Final fallback route */}
           <Route component={NotFound} />
