@@ -4,10 +4,11 @@
  */
 
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { useApp } from '@/contexts/AppContext';
-import { BoardCategory, EmotionCategory, FilterCriteria, BOARD_LABELS, EMOTION_LABELS, EMOTION_ICONS } from '@/types/models';
+import { BoardCategory, EmotionCategory, FilterCriteria, EMOTION_ICONS } from '@/types/models';
 import { ArrowLeft } from 'lucide-react';
 import PostCard from '@/components/PostCard';
 
@@ -15,10 +16,10 @@ const BOARD_CATEGORIES: BoardCategory[] = ['work', 'family', 'school', 'other'];
 const EMOTION_CATEGORIES: EmotionCategory[] = ['happy', 'sad', 'tired', 'angry'];
 
 export default function SearchPage() {
+  const { t } = useTranslation();
   const [, setLocation] = useLocation();
   const { getFilteredPosts } = useApp();
 
-  const [filters, setFilters] = useState<FilterCriteria>({});
   const [whenStart, setWhenStart] = useState('');
   const [whenEnd, setWhenEnd] = useState('');
   const [where, setWhere] = useState('');
@@ -41,7 +42,6 @@ export default function SearchPage() {
   }, [selectedBoard, selectedEmotion, whenStart, whenEnd, where, who, how, getFilteredPosts]);
 
   const handleReset = () => {
-    setFilters({});
     setWhenStart('');
     setWhenEnd('');
     setWhere('');
@@ -59,72 +59,76 @@ export default function SearchPage() {
           <button
             onClick={() => setLocation('/')}
             className="p-2 hover:bg-secondary rounded-lg transition-colors"
+            aria-label={t('profile.backLabel')}
           >
             <ArrowLeft className="w-5 h-5 text-foreground" />
           </button>
-          <h1 className="font-heading text-foreground">検索・フィルター</h1>
+          <h1 className="font-heading text-foreground">{t('search.title')}</h1>
         </div>
       </div>
 
-      {/* Search Form */}
-      <div className="container py-6 max-w-2xl">
+      <main className="container py-6 max-w-2xl">
         <div className="bg-card rounded-xl p-6 shadow-sm mb-6">
           {/* Board Category Filter */}
-          <div className="mb-6">
-            <label className="font-body font-semibold text-foreground block mb-3">
-              掲示板
-            </label>
+          <div className="mb-6" role="group" aria-labelledby="search-board-label">
+            <p id="search-board-label" className="font-body font-semibold text-foreground block mb-3">
+              {t('search.board')}
+            </p>
             <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
                 onClick={() => setSelectedBoard(undefined)}
+                aria-pressed={selectedBoard === undefined}
                 className={`p-3 rounded-lg font-body font-semibold transition-all ${
                   selectedBoard === undefined
                     ? 'bg-primary text-primary-foreground shadow-md'
                     : 'bg-secondary text-foreground hover:bg-muted'
                 }`}
               >
-                すべて
+                {t('search.all')}
               </button>
               {BOARD_CATEGORIES.map((category) => (
                 <button
                   key={category}
                   type="button"
                   onClick={() => setSelectedBoard(category)}
+                  aria-pressed={selectedBoard === category}
                   className={`p-3 rounded-lg font-body font-semibold transition-all ${
                     selectedBoard === category
                       ? 'bg-primary text-primary-foreground shadow-md'
                       : 'bg-secondary text-foreground hover:bg-muted'
                   }`}
                 >
-                  {BOARD_LABELS[category]}
+                  {t(`boards.${category}`)}
                 </button>
               ))}
             </div>
           </div>
 
           {/* Emotion Category Filter */}
-          <div className="mb-6">
-            <label className="font-body font-semibold text-foreground block mb-3">
-              感情
-            </label>
+          <div className="mb-6" role="group" aria-labelledby="search-emotion-label">
+            <p id="search-emotion-label" className="font-body font-semibold text-foreground block mb-3">
+              {t('search.emotion')}
+            </p>
             <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
                 onClick={() => setSelectedEmotion(undefined)}
+                aria-pressed={selectedEmotion === undefined}
                 className={`p-3 rounded-lg font-body font-semibold transition-all ${
                   selectedEmotion === undefined
                     ? 'bg-primary text-primary-foreground shadow-md'
                     : 'bg-secondary text-foreground hover:bg-muted'
                 }`}
               >
-                すべて
+                {t('search.all')}
               </button>
               {EMOTION_CATEGORIES.map((emotion) => (
                 <button
                   key={emotion}
                   type="button"
                   onClick={() => setSelectedEmotion(emotion)}
+                  aria-pressed={selectedEmotion === emotion}
                   className={`p-3 rounded-lg font-body font-semibold transition-all flex items-center gap-2 ${
                     selectedEmotion === emotion
                       ? 'bg-primary text-primary-foreground shadow-md'
@@ -132,7 +136,7 @@ export default function SearchPage() {
                   }`}
                 >
                   <span className="text-lg">{EMOTION_ICONS[emotion]}</span>
-                  {EMOTION_LABELS[emotion].split('ったこと')[0]}
+                  {t(`emotions.${emotion}Short`)}
                 </button>
               ))}
             </div>
@@ -141,10 +145,11 @@ export default function SearchPage() {
           {/* Date Range */}
           <div className="grid grid-cols-2 gap-4 mb-6">
             <div>
-              <label className="font-body font-semibold text-foreground block mb-2">
-                日付から
+              <label htmlFor="search-date-from" className="font-body font-semibold text-foreground block mb-2">
+                {t('search.dateFrom')}
               </label>
               <input
+                id="search-date-from"
                 type="date"
                 value={whenStart}
                 onChange={(e) => setWhenStart(e.target.value)}
@@ -152,10 +157,11 @@ export default function SearchPage() {
               />
             </div>
             <div>
-              <label className="font-body font-semibold text-foreground block mb-2">
-                日付まで
+              <label htmlFor="search-date-to" className="font-body font-semibold text-foreground block mb-2">
+                {t('search.dateTo')}
               </label>
               <input
+                id="search-date-to"
                 type="date"
                 value={whenEnd}
                 onChange={(e) => setWhenEnd(e.target.value)}
@@ -166,12 +172,13 @@ export default function SearchPage() {
 
           {/* Where */}
           <div className="mb-6">
-            <label className="font-body font-semibold text-foreground block mb-2">
-              どこで（場所）
+            <label htmlFor="search-where" className="font-body font-semibold text-foreground block mb-2">
+              {t('search.where')}
             </label>
             <input
+              id="search-where"
               type="text"
-              placeholder="キーワードで検索"
+              placeholder={t('search.wherePlaceholder')}
               value={where}
               onChange={(e) => setWhere(e.target.value)}
               className="w-full px-4 py-2 border border-border rounded-lg font-body text-foreground bg-card placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
@@ -180,12 +187,13 @@ export default function SearchPage() {
 
           {/* Who */}
           <div className="mb-6">
-            <label className="font-body font-semibold text-foreground block mb-2">
-              誰から（人物）
+            <label htmlFor="search-who" className="font-body font-semibold text-foreground block mb-2">
+              {t('search.who')}
             </label>
             <input
+              id="search-who"
               type="text"
-              placeholder="キーワードで検索"
+              placeholder={t('search.whoPlaceholder')}
               value={who}
               onChange={(e) => setWho(e.target.value)}
               className="w-full px-4 py-2 border border-border rounded-lg font-body text-foreground bg-card placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
@@ -194,38 +202,38 @@ export default function SearchPage() {
 
           {/* How */}
           <div className="mb-6">
-            <label className="font-body font-semibold text-foreground block mb-2">
-              どんなふうに（感情・反応）
+            <label htmlFor="search-how" className="font-body font-semibold text-foreground block mb-2">
+              {t('search.how')}
             </label>
             <input
+              id="search-how"
               type="text"
-              placeholder="キーワードで検索"
+              placeholder={t('search.howPlaceholder')}
               value={how}
               onChange={(e) => setHow(e.target.value)}
               className="w-full px-4 py-2 border border-border rounded-lg font-body text-foreground bg-card placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
 
-          {/* Reset Button */}
           <Button
             type="button"
             variant="outline"
             onClick={handleReset}
             className="w-full"
           >
-            フィルターをリセット
+            {t('search.reset')}
           </Button>
         </div>
 
         {/* Results */}
         <div>
           <h2 className="font-subheading text-foreground mb-4">
-            検索結果（{filteredPosts.length}件）
+            {t('search.results', { count: filteredPosts.length })}
           </h2>
           {filteredPosts.length === 0 ? (
             <div className="text-center py-12">
               <p className="font-body text-muted-foreground">
-                条件に合う投稿がありません
+                {t('search.noResults')}
               </p>
             </div>
           ) : (
@@ -236,7 +244,7 @@ export default function SearchPage() {
             </div>
           )}
         </div>
-      </div>
+      </main>
     </div>
   );
 }

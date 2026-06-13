@@ -1,15 +1,18 @@
 /**
  * ProfileSetupModal
  * 投稿前にプロフィール未設定のユーザーに表示するモーダル
- * ニックネーム・年齢・性別・国を設定してから投稿を続行できる
  */
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { useApp } from '@/contexts/AppContext';
-import { User, AgeGroup, Gender, AGE_GROUP_LABELS, GENDER_LABELS, COUNTRIES } from '@/types/models';
+import { User, AgeGroup, Gender, COUNTRIES } from '@/types/models';
 import { trpc } from '@/lib/trpc';
 import { X } from 'lucide-react';
+
+const AGE_GROUPS: AgeGroup[] = ['10s', '20s', '30s', '40s', '50plus'];
+const GENDERS: Gender[] = ['male', 'female', 'other'];
 
 const AGE_TO_DB: Record<AgeGroup, '10s' | '20s' | '30s' | '40s' | '50s+'> = {
   '10s': '10s',
@@ -25,6 +28,7 @@ interface ProfileSetupModalProps {
 }
 
 export default function ProfileSetupModal({ onComplete, onCancel }: ProfileSetupModalProps) {
+  const { t, i18n } = useTranslation();
   const { setUser } = useApp();
   const [userName, setUserName] = useState('');
   const [selectedAge, setSelectedAge] = useState<AgeGroup | null>(null);
@@ -36,11 +40,11 @@ export default function ProfileSetupModal({ onComplete, onCancel }: ProfileSetup
 
   const handleSubmit = async () => {
     if (!userName.trim()) {
-      alert('ユーザー名を入力してください');
+      alert(t('onboarding.nameRequired'));
       return;
     }
     if (!selectedAge || !selectedGender) {
-      alert('年齢と性別を選択してください');
+      alert(t('onboarding.ageGenderRequired'));
       return;
     }
 
@@ -66,14 +70,13 @@ export default function ProfileSetupModal({ onComplete, onCancel }: ProfileSetup
       onComplete();
     } catch (error) {
       console.error('Failed to create user:', error);
-      alert('ユーザー登録に失敗しました。もう一度お試しください。');
+      alert(t('onboarding.registerError'));
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    /* Backdrop */
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
       role="dialog"
@@ -85,15 +88,15 @@ export default function ProfileSetupModal({ onComplete, onCancel }: ProfileSetup
         <div className="flex items-center justify-between p-6 border-b border-border">
           <div>
             <h2 id="profile-modal-title" className="font-subheading text-foreground">
-              はじめに
+              {t('onboarding.title')}
             </h2>
             <p className="font-body-sm text-muted-foreground mt-1">
-              投稿前にニックネームを設定してください
+              {t('onboarding.subtitle')}
             </p>
           </div>
           <button
             onClick={onCancel}
-            aria-label="閉じる"
+            aria-label={t('onboarding.close')}
             className="p-2 hover:bg-secondary rounded-lg transition-colors text-muted-foreground hover:text-foreground"
           >
             <X className="w-5 h-5" />
@@ -105,12 +108,12 @@ export default function ProfileSetupModal({ onComplete, onCancel }: ProfileSetup
           {/* User Name */}
           <div>
             <label htmlFor="modal-username" className="font-body font-semibold text-foreground block mb-2">
-              ユーザー名 <span className="text-destructive">*</span>
+              {t('onboarding.username')} <span className="text-destructive">*</span>
             </label>
             <input
               id="modal-username"
               type="text"
-              placeholder="ニックネームを入力してください"
+              placeholder={t('onboarding.usernamePlaceholder')}
               value={userName}
               onChange={(e) => setUserName(e.target.value)}
               aria-required="true"
@@ -121,21 +124,22 @@ export default function ProfileSetupModal({ onComplete, onCancel }: ProfileSetup
           {/* Age */}
           <div role="group" aria-labelledby="modal-age-label">
             <p id="modal-age-label" className="font-body font-semibold text-foreground block mb-2">
-              年齢 <span className="text-destructive">*</span>
+              {t('onboarding.age')} <span className="text-destructive">*</span>
             </p>
             <div className="grid grid-cols-3 gap-2">
-              {(Object.keys(AGE_GROUP_LABELS) as AgeGroup[]).map((age) => (
+              {AGE_GROUPS.map((age) => (
                 <button
                   key={age}
                   type="button"
                   onClick={() => setSelectedAge(age)}
+                  aria-pressed={selectedAge === age}
                   className={`p-2 rounded-lg font-body text-sm font-semibold transition-all ${
                     selectedAge === age
                       ? 'bg-primary text-primary-foreground shadow-md'
                       : 'bg-secondary text-foreground hover:bg-muted'
                   }`}
                 >
-                  {AGE_GROUP_LABELS[age]}
+                  {t(`age.${age}`)}
                 </button>
               ))}
             </div>
@@ -144,21 +148,22 @@ export default function ProfileSetupModal({ onComplete, onCancel }: ProfileSetup
           {/* Gender */}
           <div role="group" aria-labelledby="modal-gender-label">
             <p id="modal-gender-label" className="font-body font-semibold text-foreground block mb-2">
-              性別 <span className="text-destructive">*</span>
+              {t('onboarding.gender')} <span className="text-destructive">*</span>
             </p>
             <div className="grid grid-cols-3 gap-2">
-              {(Object.keys(GENDER_LABELS) as Gender[]).map((gender) => (
+              {GENDERS.map((gender) => (
                 <button
                   key={gender}
                   type="button"
                   onClick={() => setSelectedGender(gender)}
+                  aria-pressed={selectedGender === gender}
                   className={`p-2 rounded-lg font-body text-sm font-semibold transition-all ${
                     selectedGender === gender
                       ? 'bg-primary text-primary-foreground shadow-md'
                       : 'bg-secondary text-foreground hover:bg-muted'
                   }`}
                 >
-                  {GENDER_LABELS[gender]}
+                  {t(`gender.${gender}`)}
                 </button>
               ))}
             </div>
@@ -167,8 +172,8 @@ export default function ProfileSetupModal({ onComplete, onCancel }: ProfileSetup
           {/* Country (optional) */}
           <div>
             <label htmlFor="modal-country" className="font-body font-semibold text-foreground block mb-2">
-              国
-              <span className="ml-2 text-xs text-muted-foreground font-normal">任意</span>
+              {t('onboarding.country')}
+              <span className="ml-2 text-xs text-muted-foreground font-normal">{t('onboarding.optional')}</span>
             </label>
             <div className="relative">
               <select
@@ -177,10 +182,10 @@ export default function ProfileSetupModal({ onComplete, onCancel }: ProfileSetup
                 onChange={(e) => setSelectedCountry(e.target.value)}
                 className="w-full px-4 py-3 border border-border rounded-lg font-body text-foreground bg-background focus:outline-none focus:ring-2 focus:ring-primary appearance-none cursor-pointer"
               >
-                <option value="">選択してください</option>
+                <option value="">{t('onboarding.countryPlaceholder')}</option>
                 {COUNTRIES.map((c) => (
                   <option key={c.code} value={c.code}>
-                    {c.flag} {c.nameEn} / {c.name}
+                    {c.flag} {i18n.language.startsWith('ja') ? `${c.name} / ${c.nameEn}` : c.nameEn}
                   </option>
                 ))}
               </select>
@@ -191,7 +196,7 @@ export default function ProfileSetupModal({ onComplete, onCancel }: ProfileSetup
           </div>
 
           <p className="font-body-sm text-muted-foreground text-center">
-            ※ ニックネーム（匿名）です。年齢・性別・国のみ記録されます。
+            {t('onboarding.disclaimer')}
           </p>
         </div>
 
@@ -203,7 +208,7 @@ export default function ProfileSetupModal({ onComplete, onCancel }: ProfileSetup
             onClick={onCancel}
             className="flex-1 bg-background"
           >
-            キャンセル
+            {t('onboarding.cancel')}
           </Button>
           <Button
             type="button"
@@ -211,7 +216,7 @@ export default function ProfileSetupModal({ onComplete, onCancel }: ProfileSetup
             disabled={!userName.trim() || !selectedAge || !selectedGender || isSubmitting}
             className="flex-1"
           >
-            {isSubmitting ? '登録中...' : '設定して投稿へ'}
+            {isSubmitting ? t('onboarding.registering') : t('onboarding.submit')}
           </Button>
         </div>
       </div>

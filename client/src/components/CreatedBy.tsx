@@ -4,6 +4,7 @@
  */
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const AVATAR_URL =
   'https://d2xsxph8kpxj0f.cloudfront.net/310519663288124539/cvxJnDu67qo88yDFvdSTsi/kejita-avatar_9c378676.png';
@@ -11,6 +12,7 @@ const GITHUB_URL = 'https://github.com/kejita';
 const GITHUB_LOGIN = 'kejita';
 
 export default function CreatedBy() {
+  const { t } = useTranslation();
   return (
     <div className="flex justify-center mt-8 mb-2">
       <a
@@ -29,7 +31,7 @@ export default function CreatedBy() {
 
         {/* Text */}
         <span className="text-xs text-muted-foreground leading-none">
-          Created by{' '}
+          {t('createdBy')}{' '}
           <span className="font-semibold text-foreground group-hover:text-primary transition-colors duration-200">
             {GITHUB_LOGIN}
           </span>

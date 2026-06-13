@@ -1,16 +1,12 @@
 /**
  * Home Page
  * メイン画面 - 投稿一覧表示、タブ切り替え
- * 
- * Design: Emotion Palette - Warm Minimalism
- * - 感情色で左ボーダー装飾
- * - 温かみのあるカード型レイアウト
- * - 直感的なアイコンナビゲーション
  */
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useApp } from '@/contexts/AppContext';
-import { BoardCategory, EmotionCategory, BOARD_LABELS, EMOTION_ICONS, EMOTION_LABELS, EMOTION_SHORT_LABELS, EMOTION_COLORS } from '@/types/models';
+import { BoardCategory, EmotionCategory, EMOTION_ICONS, EMOTION_COLORS } from '@/types/models';
 import { Button } from '@/components/ui/button';
 import { Plus, Search, User } from 'lucide-react';
 import PostCard from '@/components/PostCard';
@@ -21,7 +17,8 @@ const BOARD_CATEGORIES: BoardCategory[] = ['work', 'family', 'school', 'other'];
 const EMOTION_CATEGORIES: EmotionCategory[] = ['happy', 'sad', 'tired', 'angry'];
 
 export default function HomePage() {
-  const { posts, user } = useApp();
+  const { t } = useTranslation();
+  const { posts } = useApp();
   const [, setLocation] = useLocation();
   const [selectedBoard, setSelectedBoard] = useState<BoardCategory>('work');
   const [selectedEmotion, setSelectedEmotion] = useState<EmotionCategory>('happy');
@@ -37,21 +34,23 @@ export default function HomePage() {
         <div className="container py-4">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="font-display text-foreground leading-tight">Emotion Board</h1>
-              <p className="text-xs text-muted-foreground italic mt-0.5">Express your feelings in your own words</p>
+              <h1 className="font-display text-foreground leading-tight">{t('app.title')}</h1>
+              <p className="text-xs text-muted-foreground italic mt-0.5">{t('app.subtitle')}</p>
             </div>
             <div className="flex gap-2">
               <button
                 onClick={() => setLocation('/search')}
                 className="p-2 hover:bg-secondary rounded-lg transition-colors"
-                title="検索"
+                title={t('nav.search')}
+                aria-label={t('nav.search')}
               >
                 <Search className="w-5 h-5 text-foreground" />
               </button>
               <button
                 onClick={() => setLocation('/profile')}
                 className="p-2 hover:bg-secondary rounded-lg transition-colors"
-                title="プロフィール"
+                title={t('nav.profile')}
+                aria-label={t('nav.profile')}
               >
                 <User className="w-5 h-5 text-foreground" />
               </button>
@@ -71,7 +70,7 @@ export default function HomePage() {
                       : 'bg-secondary text-foreground hover:bg-muted'
                   }`}
                 >
-                  {BOARD_LABELS[category]}
+                  {t(`boards.${category}`)}
                 </button>
               ))}
             </div>
@@ -80,14 +79,14 @@ export default function HomePage() {
       </div>
 
       {/* Main Content */}
-      <div className="container py-6">
+      <main className="container py-6">
         {filteredPosts.length === 0 ? (
           <div className="text-center py-12">
             <p className="font-body text-muted-foreground mb-4">
-              投稿がまだありません
+              {t('home.noPosts')}
             </p>
             <Button onClick={() => setLocation('/post')}>
-              最初の投稿をしてみる
+              {t('home.firstPost')}
             </Button>
           </div>
         ) : (
@@ -97,7 +96,7 @@ export default function HomePage() {
             ))}
           </div>
         )}
-      </div>
+      </main>
 
       {/* Created By Footer */}
       <div className="pb-4">
@@ -108,7 +107,8 @@ export default function HomePage() {
       <button
         onClick={() => setLocation('/post')}
         className="fixed bottom-28 right-4 w-14 h-14 bg-primary text-primary-foreground rounded-full shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center"
-        title="新しい投稿"
+        title={t('nav.newPost')}
+        aria-label={t('nav.newPost')}
       >
         <Plus className="w-6 h-6" />
       </button>
@@ -133,7 +133,7 @@ export default function HomePage() {
               >
                 <span className="text-2xl mb-1">{EMOTION_ICONS[emotion]}</span>
                 <span className="font-body-sm text-foreground text-center text-xs">
-                  {EMOTION_SHORT_LABELS[emotion]}
+                  {t(`emotions.${emotion}Short`)}
                 </span>
               </button>
             ))}
