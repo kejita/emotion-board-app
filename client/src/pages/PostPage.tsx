@@ -12,6 +12,7 @@ import { BoardCategory, EmotionCategory, EMOTION_ICONS } from '@/types/models';
 import { ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import ProfileSetupModal from '@/components/ProfileSetupModal';
+import LanguageToggle from '@/components/LanguageToggle';
 
 const BOARD_CATEGORIES: BoardCategory[] = ['work', 'family', 'school', 'other'];
 const EMOTION_CATEGORIES: EmotionCategory[] = ['happy', 'sad', 'tired', 'angry'];
@@ -118,7 +119,8 @@ export default function PostPage() {
           >
             <ArrowLeft className="w-5 h-5 text-foreground" />
           </button>
-          <h1 className="font-heading text-foreground">{t('post.title')}</h1>
+          <h1 className="font-heading text-foreground flex-1">{t('post.title')}</h1>
+          <LanguageToggle />
         </div>
       </div>
 

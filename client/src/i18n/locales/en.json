@@ -6,7 +6,8 @@
   "nav": {
     "search": "Search",
     "profile": "Profile",
-    "newPost": "New post"
+    "newPost": "New post",
+    "toggleLanguage": "日本語に切り替える"
   },
   "home": {
     "noPosts": "No posts yet",

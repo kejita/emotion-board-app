@@ -11,6 +11,7 @@ import { useApp } from '@/contexts/AppContext';
 import { BoardCategory, EmotionCategory, FilterCriteria, EMOTION_ICONS } from '@/types/models';
 import { ArrowLeft } from 'lucide-react';
 import PostCard from '@/components/PostCard';
+import LanguageToggle from '@/components/LanguageToggle';
 
 const BOARD_CATEGORIES: BoardCategory[] = ['work', 'family', 'school', 'other'];
 const EMOTION_CATEGORIES: EmotionCategory[] = ['happy', 'sad', 'tired', 'angry'];
@@ -63,7 +64,8 @@ export default function SearchPage() {
           >
             <ArrowLeft className="w-5 h-5 text-foreground" />
           </button>
-          <h1 className="font-heading text-foreground">{t('search.title')}</h1>
+          <h1 className="font-heading text-foreground flex-1">{t('search.title')}</h1>
+          <LanguageToggle />
         </div>
       </div>
 

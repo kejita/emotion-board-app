@@ -6,7 +6,8 @@
   "nav": {
     "search": "検索",
     "profile": "プロフィール",
-    "newPost": "新しい投稿"
+    "newPost": "新しい投稿",
+    "toggleLanguage": "Switch to English"
   },
   "home": {
     "noPosts": "投稿がまだありません",

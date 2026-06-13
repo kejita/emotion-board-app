@@ -9,6 +9,7 @@ import { useApp } from '@/contexts/AppContext';
 import { BoardCategory, EmotionCategory, EMOTION_ICONS, EMOTION_COLORS } from '@/types/models';
 import { Button } from '@/components/ui/button';
 import { Plus, Search, User } from 'lucide-react';
+import LanguageToggle from '@/components/LanguageToggle';
 import PostCard from '@/components/PostCard';
 import CreatedBy from '@/components/CreatedBy';
 import { useLocation } from 'wouter';
@@ -38,6 +39,7 @@ export default function HomePage() {
               <p className="text-xs text-muted-foreground italic mt-0.5">{t('app.subtitle')}</p>
             </div>
             <div className="flex gap-2">
+              <LanguageToggle />
               <button
                 onClick={() => setLocation('/search')}
                 className="p-2 hover:bg-secondary rounded-lg transition-colors"
